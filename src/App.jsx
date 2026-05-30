@@ -195,45 +195,84 @@ function DemoBanner({ onDismiss }) {
   return (
     <div
       style={{
-        background: 'linear-gradient(90deg, #FEF3C7 0%, #FDE68A 100%)',
-        borderBottom: '1px solid rgba(180,130,40,0.3)',
-        color: '#78350F',
+        background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 60%, #FCD34D 100%)',
+        borderBottom: '2px solid rgba(146,64,14,0.25)',
+        color: '#451A03',
         fontSize: 13,
-        lineHeight: 1.45
+        lineHeight: 1.5
       }}
     >
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-2.5 flex items-start gap-3">
-        <div
-          className="hidden sm:flex flex-shrink-0 w-7 h-7 rounded-full items-center justify-center font-bold text-xs mt-0.5"
-          style={{ background: '#92400E', color: '#FEF3C7' }}
-          aria-hidden="true"
-        >
-          L
-        </div>
-        <div className="flex-1 min-w-0">
-          {/* Line 1: brand + tagline */}
-          <div className="mb-1">
-            <strong style={{ fontWeight: 800, letterSpacing: '0.04em' }}>LATTICE</strong>
-            <span style={{ opacity: 0.7 }}> — engagement platform for boutique lobby firms.</span>
-            <span className="hidden sm:inline" style={{ opacity: 0.9 }}>{' '}Demo for <strong style={{ fontWeight: 700 }}>Wall Kane Consulting</strong>, themed to the <strong style={{ fontWeight: 700 }}>Cherry Creek West</strong> rezoning work.</span>
-          </div>
-          {/* Line 2: three-wave navigation */}
-          <div style={{ fontSize: 12, opacity: 0.92 }}>
-            <span><strong style={{ fontWeight: 700 }}>Wave 1</strong> Public site</span>
-            <span style={{ opacity: 0.5 }}> · </span>
-            <span><strong style={{ fontWeight: 700 }}>Wave 2</strong> Internal dashboard <span className="hidden sm:inline" style={{ opacity: 0.7 }}>(toggle above)</span></span>
-            <span style={{ opacity: 0.5 }}> · </span>
-            <span><strong style={{ fontWeight: 700 }}>Wave 3</strong> War Room + Builder <span className="hidden sm:inline" style={{ opacity: 0.7 }}>(top right)</span></span>
-          </div>
-        </div>
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-5 relative">
+        {/* Dismiss button — absolute top-right */}
         <button
           onClick={onDismiss}
-          aria-label="Dismiss banner"
-          className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold text-base transition-colors hover:opacity-70 mt-0.5"
-          style={{ background: 'rgba(120,53,15,0.10)', color: '#78350F' }}
+          aria-label="Dismiss welcome card"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 rounded-full flex items-center justify-center font-bold text-base transition-colors hover:opacity-70 z-10"
+          style={{ background: 'rgba(120,53,15,0.12)', color: '#451A03' }}
         >
           ×
         </button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 pr-10">
+          {/* LEFT — Brand + welcome */}
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div
+                className="flex flex-shrink-0 w-8 h-8 rounded-md items-center justify-center font-bold text-sm"
+                style={{ background: '#451A03', color: '#FEF3C7' }}
+                aria-hidden="true"
+              >
+                L
+              </div>
+              <div className="font-bold text-lg sm:text-xl" style={{ letterSpacing: '0.03em' }}>
+                Welcome to LATTICE
+              </div>
+            </div>
+            <div className="text-[13px] sm:text-sm mb-2" style={{ opacity: 0.9 }}>
+              Engagement platform for boutique lobby firms. This is a demo of what the platform could be — themed to <strong style={{ fontWeight: 700 }}>Wall Kane Consulting</strong> and the <strong style={{ fontWeight: 700 }}>Cherry Creek West</strong> work.
+            </div>
+            <div className="text-[11px] sm:text-[12px] pt-2 border-t space-y-1" style={{ borderColor: 'rgba(120,53,15,0.18)', opacity: 0.85 }}>
+              <div>
+                <strong style={{ fontWeight: 700 }}>Waves</strong> = how the platform gets built over time. <strong style={{ fontWeight: 700 }}>Steps</strong> = how a single project moves through its lifecycle (the pills inside Wave 1).
+              </div>
+              <div>
+                <strong style={{ fontWeight: 700 }}>Accessible / Editorial</strong> = two design-style options (Accessible is WCAG-compliant and recommended for civic sites).
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — Three waves breakdown */}
+          <div className="lg:col-span-7">
+            <div
+              className="text-[10px] uppercase tracking-[0.18em] font-bold mb-2"
+              style={{ opacity: 0.7, fontFamily: '"IBM Plex Mono", ui-monospace, monospace' }}
+            >
+              Three waves of platform build
+            </div>
+            <div className="space-y-1.5">
+              <WaveLine n="1" title="Public site" desc="The resident-facing page you're looking at now." />
+              <WaveLine n="2" title="Internal dashboard for the WKC team" desc='Toggle "Internal dashboard" above to see it.' />
+              <WaveLine n="3" title="War Room + Builder" desc="Deeper intel + site-deployment tools. Buttons top right." />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WaveLine({ n, title, desc }) {
+  return (
+    <div className="flex items-start gap-2.5">
+      <div
+        className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center font-bold text-[11px] mt-0.5"
+        style={{ background: '#451A03', color: '#FEF3C7' }}
+      >
+        {n}
+      </div>
+      <div className="text-[13px] leading-snug flex-1">
+        <strong style={{ fontWeight: 700 }}>{title}</strong>
+        <span style={{ opacity: 0.75 }}> — {desc}</span>
       </div>
     </div>
   );
@@ -393,7 +432,7 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
                     <button
                       key={p.id}
                       onClick={() => setPhase(p.id)}
-                      aria-label={`Phase ${p.id}: ${isA ? p.labelA : p.labelB}`}
+                      aria-label={`Step ${p.id}: ${isA ? p.labelA : p.labelB}`}
                       style={{
                         flex: 1, minHeight: 44, padding: '8px 10px',
                         borderRadius: isA ? 3 : 6,
@@ -413,7 +452,7 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
               </div>
               <div>
                 <div className={`${monoClass} text-[10px] uppercase tracking-[0.18em] mb-1 font-medium ${isA ? 'text-stone-500' : 'text-gray-500'}`}>
-                  Phase {phase} of 3
+                  Step {phase} of 3
                 </div>
                 <div className={`text-base font-semibold leading-snug ${isA ? 'text-stone-900' : 'text-gray-900'}`}>
                   {isA ? PHASES[phase - 1].labelA : PHASES[phase - 1].labelB}
@@ -426,7 +465,7 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
               <div className="flex items-center gap-2">
                 <span className={`${monoClass} text-[11px] uppercase tracking-[0.18em] mr-2 whitespace-nowrap ${
                   isA ? 'text-stone-500' : 'text-gray-500'
-                }`}>Phase</span>
+                }`}>Step</span>
                 {PHASES.map((p) => {
                   const active = phase === p.id;
                   const label = isA ? p.labelA : p.labelB;
@@ -1249,9 +1288,9 @@ const SectionB = ({ title, kicker, children, intro }) => (
 
 function HeroB({ phase }) {
   const data = {
-    1: { kicker: 'Phase 1 of 3', heading: 'A new neighborhood for Cherry Creek.', cta: { label: 'Sign up for updates', icon: Mail } },
-    2: { kicker: 'Phase 2 of 3 · Now collecting input', heading: 'Your input is shaping this plan.', cta: { label: 'Share your input', icon: MessageSquare } },
-    3: { kicker: 'Phase 3 of 3 · Hearing on October 14', heading: 'Here is what changed because of your feedback.', cta: { label: 'RSVP to the public hearing', icon: Calendar } }
+    1: { kicker: 'Step 1 of 3', heading: 'A new neighborhood for Cherry Creek.', cta: { label: 'Sign up for updates', icon: Mail } },
+    2: { kicker: 'Step 2 of 3 · Now collecting input', heading: 'Your input is shaping this plan.', cta: { label: 'Share your input', icon: MessageSquare } },
+    3: { kicker: 'Step 3 of 3 · Hearing on October 14', heading: 'Here is what changed because of your feedback.', cta: { label: 'RSVP to the public hearing', icon: Calendar } }
   };
   const d = data[phase];
   const Cta = d.cta.icon;
@@ -1751,7 +1790,7 @@ function DashHeaderB({ phase }) {
             <div className="text-sm font-bold uppercase tracking-wider mb-1" style={{ color: B.primary }}>Internal · {PROJECT.applicant} × {PROJECT.firm}</div>
             <h1 className="font-display-b text-3xl sm:text-4xl font-bold" style={{ color: B.heading }}>{PROJECT.name}</h1>
             <p className="text-base mt-1" style={{ color: B.textMuted }}>
-              {PROJECT.location} · <strong style={{ color: B.text }}>Phase {phase} of 3</strong> · <strong style={{ color: B.concern }}>Hearing in 47 days</strong>
+              {PROJECT.location} · <strong style={{ color: B.text }}>Step {phase} of 3</strong> · <strong style={{ color: B.concern }}>Hearing in 47 days</strong>
             </p>
           </div>
           <div className="rounded-md border-2 px-4 py-3 inline-flex flex-col" style={{ borderColor: B.success, background: B.successBg }}>

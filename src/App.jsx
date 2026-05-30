@@ -10,7 +10,8 @@ import {
   CircleDot, Layers, BarChart3, Target, FileSearch, ClipboardCheck,
   TrendingUp, TrendingDown, Minus, Activity, Lock, HelpCircle, Menu,
   ThumbsUp, ThumbsDown, CircleHelp, Send,
-  Terminal, Upload, Settings, ChevronLeft, Zap, Rocket, Database, Globe
+  Terminal, Upload, Settings, ChevronLeft, Zap, Rocket, Database, Globe,
+  Radar, Crosshair, Brain
 } from 'lucide-react';
 
 /* ============================================================
@@ -52,7 +53,7 @@ const PROJECT = {
 
 // Two label sets: terse (Style A) vs. plain-English (Style B)
 const PHASES = [
-  { id: 1, labelA: 'Pre-Submittal',  labelB: 'Introducing the project',         subA: 'Vision & introduction',      subB: 'Telling the community what\u2019s being proposed and why',                window: 'Apr — Jul 2026' },
+  { id: 1, labelA: 'Pre-Submittal',  labelB: 'Introducing the project',         subA: 'Vision & introduction',      subB: 'Telling the community what\'s being proposed and why',                window: 'Apr — Jul 2026' },
   { id: 2, labelA: 'Referral Period',labelB: 'Public comment & agency review',  subA: 'Comment & agency review',    subB: 'Residents, businesses, and city departments share input',                window: 'Aug — Sep 2026' },
   { id: 3, labelA: 'Hearing Prep',   labelB: 'Planning Commission & Council',   subA: 'Commission & Council',       subB: 'Final hearings where the project is voted on',                           window: 'Oct — Nov 2026' }
 ];
@@ -98,7 +99,7 @@ const RESPONSE_QUEUE = [
     draft: 'Thank you for flagging on-street demand. The current proposal provides 1.4 spaces per residence (336 total) plus 42 retail spaces, exceeding the MX-3 minimum (1.1) per Zoning Code §17.40.040. We are commissioning a third-party parking study before the Planning Commission hearing.',
     citation: 'Zoning Code §17.40.040', status: 'awaiting_approval', score: 0.87 },
   { id: 'r-217', theme: 'Affordable Housing %',
-    excerpt: 'Why isn\u2019t more of this housing affordable? Cherrywood needs deed-restricted units, not market-rate luxury…',
+    excerpt: 'Why isn\'t more of this housing affordable? Cherrywood needs deed-restricted units, not market-rate luxury…',
     draft: '[DRAFT — needs Lattice review] The current proposal includes 12% affordable units at 80% AMI, exceeding the 10% inclusionary requirement. We are exploring a partnership with the Cherrywood Housing Trust to deepen affordability on a portion of units.',
     citation: 'IHO §17.62.020', status: 'flagged_for_review', score: 0.62 }
 ];
@@ -167,6 +168,7 @@ export default function App() {
 
   function body() {
     if (view === 'builder') return <BuilderConsole />;
+    if (view === 'warroom') return <WarRoom />;
     if (view === 'internal') return <StyleBInternal phase={phase} />; // Internal dashboard is always the light/clean version, regardless of Design choice
     return styleVariant === 'A' ? <StyleAPublic phase={phase} /> : <StyleBPublic phase={phase} />;
   }
@@ -191,6 +193,8 @@ export default function App() {
 function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase }) {
   const isA = styleVariant === 'A';
   const isBuilder = view === 'builder';
+  const isWarRoom = view === 'warroom';
+  const isToolMode = isBuilder || isWarRoom;
   // Only Builder gets the dark engineering top bar. Internal stays light.
   const dark = isBuilder;
 
@@ -198,9 +202,11 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
   // (Tailwind dynamic className interpolation can have paint-timing issues)
   const topBarStyle = isBuilder
     ? { background: '#070A12', borderBottom: '1px solid rgba(255,255,255,0.10)', color: '#F5F5F4' }
-    : isA
-      ? { background: '#F5F0E6', borderBottom: '1px solid #D6D3D1', color: '#1C1917' }
-      : { background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', color: '#111827' };
+    : isWarRoom
+      ? { background: '#0B0E14', borderBottom: '1px solid rgba(255,168,64,0.22)', color: '#F5F5F4' }
+      : isA
+        ? { background: '#F5F0E6', borderBottom: '1px solid #D6D3D1', color: '#1C1917' }
+        : { background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', color: '#111827' };
 
   const monoClass = isA ? 'font-mono-a' : 'font-display-b';
 
@@ -212,9 +218,9 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
           <Wordmark isA={isA} dark={dark} />
           <div className="flex-1" />
 
-          {!isBuilder ? (
+          {!isToolMode ? (
             <>
-              {/* Desktop: Design + View (Public/Internal only) + Builder launch */}
+              {/* Desktop: Design + View + tool launch buttons */}
               <div className="hidden md:flex items-center gap-2">
                 <SegmentedToggle
                   label="Design"
@@ -238,16 +244,18 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
                   isA={isA}
                   dark={dark}
                 />
+                <WarRoomLaunch onClick={() => setView('warroom')} />
                 <BuilderLaunch onClick={() => setView('builder')} />
               </div>
 
-              {/* Mobile: just the Builder launch button on row 1 */}
-              <div className="md:hidden">
+              {/* Mobile: both tool launches on row 1 (compact) */}
+              <div className="md:hidden flex items-center gap-2">
+                <WarRoomLaunch compact onClick={() => setView('warroom')} />
                 <BuilderLaunch compact onClick={() => setView('builder')} />
               </div>
             </>
-          ) : (
-            // BUILDER MODE — only an Exit button
+          ) : isBuilder ? (
+            // BUILDER MODE — Exit button (cyan)
             <button
               onClick={() => setView('public')}
               className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold transition-colors"
@@ -260,11 +268,25 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
             >
               <ChevronLeft size={16} /> Exit Builder
             </button>
+          ) : (
+            // WAR ROOM MODE — Exit button (amber)
+            <button
+              onClick={() => setView('public')}
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold transition-colors"
+              style={{
+                background: 'transparent',
+                color: '#FFA840',
+                border: '1px solid rgba(255,168,64,0.45)',
+                minHeight: 44
+              }}
+            >
+              <ChevronLeft size={16} /> Exit War Room
+            </button>
           )}
         </div>
 
-        {/* Mobile rows for Design + View — only when NOT in Builder */}
-        {!isBuilder && (
+        {/* Mobile rows for Design + View — only when NOT in any tool mode */}
+        {!isToolMode && (
           <>
             <div className="md:hidden pb-3">
               <SegmentedToggle
@@ -540,7 +562,7 @@ function StyleAPublic({ phase }) {
 }
 
 function HeroA({ phase }) {
-  const headlines = { 1: 'A neighborhood, not a project.', 2: 'Your input is shaping this plan.', 3: 'We heard you. Here\u2019s what changed.' };
+  const headlines = { 1: 'A neighborhood, not a project.', 2: 'Your input is shaping this plan.', 3: 'We heard you. Here\'s what changed.' };
   const ctas = { 1: { label: 'Get project updates', icon: Mail }, 2: { label: 'Share your input', icon: MessageSquare }, 3: { label: 'RSVP for the hearing', icon: Calendar } };
   const Cta = ctas[phase].icon;
   return (
@@ -701,7 +723,7 @@ function DocLibraryA({ compact }) {
       </div>
       <div className="flex items-center gap-2 mb-6">
         <Shield className="w-3 h-3 text-stone-500 flex-shrink-0" />
-        <span className="font-mono-a text-[10px] uppercase tracking-[0.16em] text-stone-500">Every answer cites the source. We don’t generate zoning claims.</span>
+        <span className="font-mono-a text-[10px] uppercase tracking-[0.16em] text-stone-500">Every answer cites the source. We don't generate zoning claims.</span>
       </div>
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-2">
@@ -819,8 +841,8 @@ function CommentsA() {
 
 function ResponsivenessA({ compact }) {
   return (
-    <SectionA title="How we’re listening" mono={compact ? '04' : '02'}>
-      <p className="text-stone-700 max-w-2xl mb-6 leading-relaxed">Every concern is tagged, clustered, and reviewed weekly. Here’s what changed.</p>
+    <SectionA title="How we're listening" mono={compact ? '04' : '02'}>
+      <p className="text-stone-700 max-w-2xl mb-6 leading-relaxed">Every concern is tagged, clustered, and reviewed weekly. Here's what changed.</p>
       <div className="border border-stone-300 bg-white/40 rounded-sm overflow-hidden">
         <div className="grid grid-cols-12 gap-4 px-4 sm:px-5 py-3 border-b border-stone-300 bg-white/30">
           <div className="col-span-12 sm:col-span-4 font-mono-a text-[10px] uppercase tracking-[0.18em] text-stone-500">You said</div>
@@ -876,9 +898,9 @@ function FAQA() {
     <SectionA title="Common questions" mono="04">
       <div className="grid grid-cols-12 gap-x-8 gap-y-6">
         {[
-          ['Who\u2019s behind this project?',  'Meridian Development Partners, working with Lattice Public Affairs.'],
+          ['Who\'s behind this project?',  'Meridian Development Partners, working with Lattice Public Affairs.'],
           ['Is this a city website?',           'No. This is an applicant-run project site. Official city info is at cherrywood.gov.'],
-          ['How will my comment be used?',      'Comments are clustered weekly and reflected in the "How we\u2019re listening" matrix.'],
+          ['How will my comment be used?',      'Comments are clustered weekly and reflected in the \"How we\'re listening\" matrix.'],
           ['What happens at the hearing?',      'Planning Commission recommends; City Council holds the final vote.']
         ].map(([q,a],i)=>(
           <div key={i} className="col-span-12 md:col-span-6">
@@ -1090,7 +1112,7 @@ function CouncilA() {
 function InsightsA() {
   const items = [
     { n: '01', t: 'Parking is the new dominant concern', b: 'Parking surpassed Building Height (+34%). Front-load the response.' },
-    { n: '02', t: 'District 2 movement detected', b: 'Whitfield mentioned the project favorably at last night\u2019s HOA. Suggest one-on-one.' },
+    { n: '02', t: 'District 2 movement detected', b: 'Whitfield mentioned the project favorably at last night\'s HOA. Suggest one-on-one.' },
     { n: '03', t: 'Letter-of-support template flagged', b: '22% verbatim submissions. Diversify into 3 variants.' }
   ];
   return (
@@ -1286,7 +1308,7 @@ function VisionB() {
     { icon: Trees, t: '1.2-acre public plaza', s: 'Permanently dedicated open space with a farmers-market easement and a maintenance endowment.' }
   ];
   return (
-    <SectionB kicker="What’s being proposed" title="What we want to build" intro="Three components, all designed to fit the character of the Linden Avenue corridor.">
+    <SectionB kicker="What's being proposed" title="What we want to build" intro="Three components, all designed to fit the character of the Linden Avenue corridor.">
       <div className="grid grid-cols-12 gap-4 sm:gap-6">
         {items.map((c, i) => (
           <article key={i} className="col-span-12 md:col-span-4 rounded-lg border-2 p-6" style={{ borderColor: B.border, background: B.bg }}>
@@ -1306,7 +1328,7 @@ function DocLibraryB({ compact }) {
   const [q, setQ] = useState('');
   const [answer, setAnswer] = useState(null);
   return (
-    <SectionB kicker="Documents & answers" title="Have a question? Ask the project documents." intro="Type any question. Every answer links back to the document it came from — the Comprehensive Plan, the Zoning Code, or the project’s own filings.">
+    <SectionB kicker="Documents & answers" title="Have a question? Ask the project documents." intro="Type any question. Every answer links back to the document it came from — the Comprehensive Plan, the Zoning Code, or the project's own filings.">
       <div className="rounded-lg border-2 mb-3 flex items-stretch" style={{ borderColor: B.borderStrong, background: B.bg }}>
         <div className="flex items-center pl-4"><Search className="w-5 h-5" style={{ color: B.textMuted }} /></div>
         <input value={q} onChange={(e)=>setQ(e.target.value)}
@@ -1489,7 +1511,7 @@ const BField = ({ label, hint, children }) => (
 
 function ResponsivenessB({ compact }) {
   return (
-    <SectionB kicker="How we’re listening" title="What changed because of your feedback" intro="Every concern raised on this site is tagged and reviewed weekly. Here is what changed in the plan, and which city document supports the change.">
+    <SectionB kicker="How we're listening" title="What changed because of your feedback" intro="Every concern raised on this site is tagged and reviewed weekly. Here is what changed in the plan, and which city document supports the change.">
       <div className="rounded-lg border-2 overflow-hidden" style={{ borderColor: B.border, background: B.bg }}>
         {/* Desktop table */}
         <table className="hidden md:table w-full">
@@ -1580,7 +1602,7 @@ function FAQB() {
     ['What happens at the hearing?',  'The Planning Commission reviews the project and makes a recommendation. The City Council then holds the final vote.']
   ];
   return (
-    <SectionB kicker="FAQ" title="Common questions" intro="If you don’t see your question here, send it to the project team and we will add it.">
+    <SectionB kicker="FAQ" title="Common questions" intro="If you don't see your question here, send it to the project team and we will add it.">
       <div className="space-y-3">
         {faqs.map(([q, a], i) => (
           <details key={i} className="rounded-lg border-2 p-5 group" style={{ borderColor: B.border, background: B.bg }}>
@@ -1882,7 +1904,7 @@ function CouncilB() {
 function InsightsB() {
   const items = [
     { t: 'Parking is now the top concern', b: 'Parking surpassed Building Height this week, up 34% in volume. The Comp Plan and Zoning Code both support our position. We recommend front-loading the parking response in the next newsletter.', priority: 'High' },
-    { t: 'District 2 may be moving toward support', b: 'Councilmember Whitfield (D2) spoke favorably about the project at last night\u2019s Linden Park HOA meeting. Tone shifted from skeptical to conditional. Suggest scheduling a one-on-one site walk before Sept 10.', priority: 'Medium' },
+    { t: 'District 2 may be moving toward support', b: 'Councilmember Whitfield (D2) spoke favorably about the project at last night\'s Linden Park HOA meeting. Tone shifted from skeptical to conditional. Suggest scheduling a one-on-one site walk before Sept 10.', priority: 'Medium' },
     { t: 'Letter-of-support template overused', b: '22% of supporters are submitting the template verbatim. Clerks notice this. We recommend diversifying the template into 3 variants and prompting for personal detail.', priority: 'Medium' }
   ];
   return (
@@ -2494,5 +2516,599 @@ function StepLaunch({ data, deployed, setDeployed }) {
         </div>
       )}
     </div>
+  );
+}
+
+/* ============================================================
+   WAR ROOM — Skunkworks intelligence-operations layer
+   Signature feature: Hearing Eve Brief
+   Plus 4 stacked intel layers underneath (the moat)
+   ============================================================ */
+
+const WR = {
+  bg: '#0B0E14',
+  surface: '#141821',
+  surfaceAlt: '#1A1F2E',
+  border: '#1F2937',
+  borderStrong: '#374151',
+  text: '#F5F5F4',
+  textMuted: '#94A3B8',
+  textDim: '#64748B',
+  amber: '#FFA840',
+  amberDim: '#C2834E',
+  red: '#FF6B7A',
+  green: '#4ADE80',
+  blue: '#60A5FA'
+};
+
+const COUNCIL_INTEL = [
+  { name: 'M. Alvarez',   district: 'D1', stance: 'Support', conf: 94, trend: 'stable',
+    levers: ['Housing supply', 'Tax base'], lastContact: '3d ago', initials: 'MA' },
+  { name: 'D. Whitfield', district: 'D2', stance: 'Movable', conf: 58, trend: 'positive',
+    levers: ['Traffic', 'TIA', 'Signal upgrade'], lastContact: '1d ago', initials: 'DW' },
+  { name: 'S. Patel',     district: 'D3', stance: 'Oppose',  conf: 91, trend: 'stable',
+    levers: ['No density', 'Skip conversion'], lastContact: '14d ago', initials: 'SP' },
+  { name: 'L. Brennan',   district: 'D4', stance: 'Support', conf: 88, trend: 'stable',
+    levers: ['Walkability', 'Transit'], lastContact: '5d ago', initials: 'LB' },
+  { name: 'T. Okonkwo',   district: 'D5', stance: 'Movable', conf: 62, trend: 'positive',
+    levers: ['Design quality', 'Renderings'], lastContact: '2d ago', initials: 'TO' },
+  { name: 'R. Hayes',     district: 'D6', stance: 'Oppose',  conf: 79, trend: 'stable',
+    levers: ['Infra cost', 'CFP case study'], lastContact: '7d ago', initials: 'RH' },
+  { name: 'K. Lindgren',  district: 'AL', stance: 'Movable', conf: 67, trend: 'positive',
+    levers: ['Wildlife', 'Sustainability'], lastContact: '4d ago', initials: 'KL' }
+];
+
+const PREDICTED_SPEAKERS = [
+  { name: 'Maria S.',  zip: '80207', likelihood: 91, argument: 'Traffic on Linden corridor',
+    why: 'Commented on 3 prior projects. Linden Park HOA active. Spoke at 2024 hearing.' },
+  { name: 'Anne R.',   zip: '80208', likelihood: 88, argument: 'Building height / mountain view',
+    why: 'HOA leadership. Posted 4× on Nextdoor this week. View-blocked unit owner.' },
+  { name: 'James W.',  zip: '80206', likelihood: 76, argument: 'School capacity overflow',
+    why: 'Parent. Spoke at school board last quarter. Commented on prior rezone.' },
+  { name: 'Carol B.',  zip: '80207', likelihood: 73, argument: 'Wildlife corridor disruption',
+    why: 'CCPS member. Filed CEQA-style appeal in 2023.' },
+  { name: 'David F.',  zip: '80206', likelihood: 64, argument: 'Affordable housing inadequate',
+    why: 'Persuadable if depth increased. Active in housing advocacy.' }
+];
+
+const REBUTTALS = [
+  { for: 'Traffic on Linden corridor',
+    text: 'TIA shows peak-hour increase of 4.2% — within MX-3 thresholds. Plus committed $480K signal upgrade at Linden & Cherry.',
+    cite: 'TIA §3.2 · ZC §17.40.060', conf: 0.93 },
+  { for: 'Building height / view',
+    text: 'Revised plan steps down to 3 stories along Linden. Preserves view corridor per Comp Plan §4.3, p.87.',
+    cite: 'Comp Plan §4.3', conf: 0.91 },
+  { for: 'School capacity',
+    text: 'Coordinated with Cherrywood SD. Project generates ~37 students; Linden Elementary at 89% capacity. SD letter on file.',
+    cite: 'SD Letter Aug 12 2026', conf: 0.84 },
+  { for: 'Wildlife corridor',
+    text: 'Setback increased to 60 ft along creek. Habitat assessment confirms no critical species impact. WCO §22.04 satisfied.',
+    cite: 'WCO §22.04', conf: 0.87 },
+  { for: 'Affordable housing',
+    text: '12% affordable at 80% AMI, exceeding 10% IH minimum. Exploring Cherrywood Housing Trust partnership for deeper affordability.',
+    cite: 'IHO §17.62.020', conf: 0.79 }
+];
+
+const OPPOSITION_GROUPS = [
+  { name: 'Linden Park HOA', members: 247, threat: 'High', threatColor: WR.red,
+    issue: 'Height, density, traffic', leader: 'Anne R.',
+    funded: 'Member dues. No outside funding detected.',
+    activity: '3 town halls scheduled · Door-knocked 4 blocks · 147 Nextdoor posts / 30d' },
+  { name: 'Cherrywood Preservation Society', members: 89, threat: 'Medium', threatColor: WR.amber,
+    issue: 'Wildlife, neighborhood character', leader: 'Carol B.',
+    funded: 'Member dues + 1 small grant ($4K, Western Conservation).',
+    activity: 'Filed records request · Active Substack (2,140 subs) · No hearing testimony yet' },
+  { name: '[Unverified group]', members: '?', threat: 'Watch', threatColor: WR.amberDim,
+    issue: 'Density (generic)', leader: 'Unknown',
+    funded: 'Domain registered 9d ago · Single anon Twitter (24 followers)',
+    activity: 'Possible astroturf — under investigation. Pattern matches 2 prior projects.' }
+];
+
+const PULSE_FEED = [
+  { time: '14:32',    type: 'positive', text: 'Whitfield (D2) used "well-designed" in Linden Park HOA Q&A. Tone shift logged.' },
+  { time: '11:08',    type: 'neutral',  text: 'New comment submitted via project site — supportive. ZIP-verified, real-name.' },
+  { time: '09:15',    type: 'warning',  text: 'Linden HOA scheduled 3rd town hall for Sep 28. Expected attendance ~80.' },
+  { time: 'Yesterday', type: 'positive', text: 'Cross-project benchmark refreshed: similar projects (n=49) at 75% approval.' },
+  { time: 'Yesterday', type: 'critical', text: 'Unverified opposition group detected — possible astroturf. Investigation triggered.' },
+  { time: '2d ago',   type: 'positive', text: 'Auto-drafted parking rebuttal approved & published. Public site updated.' }
+];
+
+const TICKER_ITEMS = [
+  { tone: 'positive', text: 'Whitfield (D2) shifted positive · Linden Park HOA Q&A' },
+  { tone: 'warning',  text: 'Linden HOA · 3rd town hall scheduled Sep 28' },
+  { tone: 'critical', text: 'Unverified opposition group detected · domain registered 9d ago' },
+  { tone: 'positive', text: 'Benchmark refreshed: 75% pass rate across 49 comparable projects' },
+  { tone: 'positive', text: 'Approval probability ↑3.2pts week-over-week' },
+  { tone: 'neutral',  text: 'Parking rebuttal approved · pushed to public site' }
+];
+
+const BENCHMARK = {
+  n: 49, passRate: 75, avgTimeline: 12.4, avgRevisions: 3.2,
+  ours: { timeline: 11, revisions: 3, pass: 78 }
+};
+
+function WarRoom() {
+  return (
+    <div style={{ background: WR.bg, color: WR.text, minHeight: '100vh', fontFamily: '"Public Sans", system-ui, sans-serif' }}>
+      <style>{`
+        @keyframes wr-ticker { 0% { transform: translateX(0) } 100% { transform: translateX(-50%) } }
+        .wr-ticker-track { animation: wr-ticker 60s linear infinite; }
+        @keyframes wr-pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.45 } }
+        .wr-pulse { animation: wr-pulse 2s ease-in-out infinite; }
+        @keyframes wr-glow { 0%, 100% { box-shadow: 0 0 8px rgba(255,168,64,0.3) } 50% { box-shadow: 0 0 16px rgba(255,168,64,0.6) } }
+        .wr-glow { animation: wr-glow 3s ease-in-out infinite; }
+      `}</style>
+      <WRHeader />
+      <WRTicker />
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-5 space-y-4">
+        <WRHearingEveBrief />
+        <div className="grid grid-cols-12 gap-4">
+          <WRPredictedSpeakers />
+          <WRRebuttals />
+        </div>
+        <div className="grid grid-cols-12 gap-4">
+          <WRBenchmark />
+          <WRAdversarial />
+          <WRInfluence />
+        </div>
+        <WRPulse />
+      </div>
+      <WRFooter />
+    </div>
+  );
+}
+
+function WRHeader() {
+  return (
+    <div className="border-b" style={{ borderColor: WR.border, background: WR.surface }}>
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="relative w-11 h-11 flex items-center justify-center wr-glow" style={{ background: WR.bg, border: `1px solid ${WR.amber}`, borderRadius: 8 }}>
+            <Radar size={20} style={{ color: WR.amber }} />
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.24em] font-bold flex items-center gap-2" style={{ color: WR.amber, fontFamily: '"IBM Plex Mono", monospace' }}>
+              <span>War Room</span>
+              <span style={{ color: WR.textDim }}>·</span>
+              <span style={{ color: WR.textMuted }}>Restricted</span>
+              <div className="w-1.5 h-1.5 rounded-full wr-pulse" style={{ background: WR.green }} />
+              <span style={{ color: WR.green }}>LIVE</span>
+            </div>
+            <div className="text-xl font-bold mt-0.5">{PROJECT.name}</div>
+            <div className="text-xs" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+              prj_cherry_creek_a7f3 · Hearing in 47 days · {PROJECT.applicant}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-3">
+          <div className="text-right">
+            <div className="text-[10px] uppercase tracking-[0.18em]" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>Win Probability</div>
+            <div className="text-5xl font-bold leading-none" style={{ color: WR.green, fontFamily: '"IBM Plex Mono", monospace' }}>72%</div>
+            <div className="text-xs flex items-center gap-1 justify-end mt-1" style={{ color: WR.green, fontFamily: '"IBM Plex Mono", monospace' }}>
+              <TrendingUp size={12} /> +3.2pts / 7d
+            </div>
+          </div>
+          <a href="/lattice-skunkworks-dossier.pdf" target="_blank" rel="noopener noreferrer"
+            title="Open the methodology & legal-positioning dossier"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded transition-colors hover:opacity-80"
+            style={{
+              background: 'rgba(255,168,64,0.08)',
+              color: WR.amber,
+              border: `1px solid rgba(255,168,64,0.40)`,
+              fontSize: 11,
+              fontFamily: '"IBM Plex Mono", monospace',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              textDecoration: 'none'
+            }}>
+            <FileText size={12} />
+            <span>Methodology &amp; Legal</span>
+            <ArrowUpRight size={12} />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WRTicker() {
+  return (
+    <div className="overflow-hidden border-b" style={{ borderColor: WR.border, background: WR.bg }}>
+      <div className="wr-ticker-track flex items-center gap-12 py-2.5 whitespace-nowrap" style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: 12, width: 'max-content' }}>
+        {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => {
+          const color = item.tone === 'positive' ? WR.green
+            : item.tone === 'warning' ? WR.amber
+            : item.tone === 'critical' ? WR.red
+            : WR.textMuted;
+          return (
+            <div key={i} className="flex items-center gap-2 shrink-0">
+              <div className="w-1.5 h-1.5 rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
+              <span style={{ color: WR.textMuted }}>{item.text}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function WRHearingEveBrief() {
+  const support = COUNCIL_INTEL.filter(c => c.stance === 'Support').length;
+  const movable = COUNCIL_INTEL.filter(c => c.stance === 'Movable').length;
+  const oppose  = COUNCIL_INTEL.filter(c => c.stance === 'Oppose').length;
+
+  return (
+    <div className="rounded-lg overflow-hidden" style={{ background: WR.surface, border: `1px solid ${WR.border}` }}>
+      <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: WR.border, background: 'linear-gradient(135deg, rgba(255,168,64,0.06) 0%, transparent 60%)' }}>
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded flex items-center justify-center" style={{ background: 'rgba(255,168,64,0.12)', border: `1px solid rgba(255,168,64,0.3)` }}>
+            <Crosshair size={16} style={{ color: WR.amber }} />
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] font-bold" style={{ color: WR.amber, fontFamily: '"IBM Plex Mono", monospace' }}>
+              Signature · Hearing Eve Brief
+            </div>
+            <div className="text-base font-semibold mt-0.5">Per-commissioner vote calls · levers · last-contact</div>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center gap-3 text-xs" style={{ fontFamily: '"IBM Plex Mono", monospace', color: WR.textMuted }}>
+          <span>Updated 06:14 MT</span><span style={{ color: WR.border }}>|</span><span>n=49 comparable</span>
+        </div>
+      </div>
+
+      {/* Vote projection strip */}
+      <div className="px-5 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b" style={{ borderColor: WR.border }}>
+        <div className="flex items-center gap-5">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>Projection</div>
+            <div className="text-xl font-bold" style={{ color: WR.green, fontFamily: '"IBM Plex Mono", monospace' }}>5 likely votes</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <WRBadge n={support} label="Support" color={WR.green} />
+            <WRBadge n={movable} label="Movable" color={WR.amber} />
+            <WRBadge n={oppose}  label="Oppose"  color={WR.red} />
+          </div>
+        </div>
+        <div className="text-xs" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+          Need 4 of 7 · Tracking 5 likely
+        </div>
+      </div>
+
+      {/* Council member cards grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: WR.border }}>
+        {COUNCIL_INTEL.map(c => <WRCouncilCard key={c.name} c={c} />)}
+      </div>
+    </div>
+  );
+}
+
+function WRBadge({ n, label, color }) {
+  return (
+    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded" style={{ background: `${color}12`, border: `1px solid ${color}40` }}>
+      <span style={{ color, fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, fontSize: 14 }}>{n}</span>
+      <span className="text-[10px] uppercase tracking-wider" style={{ color, fontFamily: '"IBM Plex Mono", monospace' }}>{label}</span>
+    </div>
+  );
+}
+
+function WRCouncilCard({ c }) {
+  const stanceColor = c.stance === 'Support' ? WR.green : c.stance === 'Movable' ? WR.amber : WR.red;
+  return (
+    <div className="p-4" style={{ background: WR.surface }}>
+      <div className="flex items-start gap-3 mb-3">
+        <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          style={{ background: `${stanceColor}22`, border: `2px solid ${stanceColor}`, color: stanceColor, fontFamily: '"IBM Plex Mono", monospace' }}>
+          {c.initials}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="font-bold text-sm">{c.name}</div>
+          <div className="text-[11px]" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>{c.district}</div>
+        </div>
+        {c.trend === 'positive' && <TrendingUp size={14} style={{ color: WR.green, flexShrink: 0 }} />}
+      </div>
+      <div className="mb-3">
+        <div className="flex items-baseline justify-between gap-2 mb-1.5">
+          <span className="text-[10px] uppercase tracking-[0.16em] font-bold" style={{ color: stanceColor, fontFamily: '"IBM Plex Mono", monospace' }}>
+            {c.stance}
+          </span>
+          <span className="text-[11px]" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>{c.conf}% conf</span>
+        </div>
+        <div className="h-1 rounded-full overflow-hidden" style={{ background: WR.borderStrong }}>
+          <div className="h-full rounded-full" style={{ width: `${c.conf}%`, background: stanceColor, boxShadow: `0 0 6px ${stanceColor}80` }} />
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <div className="text-[9px] uppercase tracking-[0.18em]" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>Levers</div>
+        <div className="flex flex-wrap gap-1">
+          {c.levers.map(l => (
+            <span key={l} className="text-[11px] px-1.5 py-0.5 rounded" style={{ background: WR.surfaceAlt, color: WR.textMuted, border: `1px solid ${WR.border}` }}>
+              {l}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="mt-3 pt-3 border-t flex items-center justify-between text-[11px]" style={{ borderColor: WR.border, color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>
+        <span>Last contact</span><span>{c.lastContact}</span>
+      </div>
+    </div>
+  );
+}
+
+function WRPredictedSpeakers() {
+  return (
+    <div className="col-span-12 lg:col-span-7 rounded-lg overflow-hidden" style={{ background: WR.surface, border: `1px solid ${WR.border}` }}>
+      <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: WR.border }}>
+        <div className="flex items-center gap-2.5">
+          <Users size={16} style={{ color: WR.amber }} />
+          <div className="font-bold text-sm">Predicted speakers</div>
+        </div>
+        <div className="text-[11px]" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+          n=5 · ranked by likelihood
+        </div>
+      </div>
+      <div>
+        {PREDICTED_SPEAKERS.map((s, i) => (
+          <div key={s.name} className="px-5 py-3.5 flex items-start gap-4" style={{ borderTop: i === 0 ? 'none' : `1px solid ${WR.border}` }}>
+            <div className="flex-shrink-0 w-14 text-center">
+              <div className="text-2xl font-bold leading-none" style={{ color: s.likelihood > 80 ? WR.red : s.likelihood > 65 ? WR.amber : WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+                {s.likelihood}
+              </div>
+              <div className="text-[9px] uppercase tracking-[0.18em] mt-1" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>
+                % likely
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="font-semibold text-sm">{s.name}</span>
+                <span className="text-[11px]" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>{s.zip}</span>
+              </div>
+              <div className="text-sm font-medium mb-1" style={{ color: WR.amber }}>{s.argument}</div>
+              <div className="text-[12px] leading-relaxed" style={{ color: WR.textMuted }}>{s.why}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WRRebuttals() {
+  return (
+    <div className="col-span-12 lg:col-span-5 rounded-lg overflow-hidden" style={{ background: WR.surface, border: `1px solid ${WR.border}` }}>
+      <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: WR.border }}>
+        <div className="flex items-center gap-2.5">
+          <Shield size={16} style={{ color: WR.green }} />
+          <div className="font-bold text-sm">Auto-rebuttal library</div>
+        </div>
+        <div className="text-[11px]" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+          RAG-cited · pre-drafted
+        </div>
+      </div>
+      <div>
+        {REBUTTALS.map((r, i) => (
+          <div key={r.for} className="px-5 py-3.5" style={{ borderTop: i === 0 ? 'none' : `1px solid ${WR.border}` }}>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] font-bold" style={{ color: WR.amber, fontFamily: '"IBM Plex Mono", monospace' }}>
+                {r.for}
+              </div>
+              <div className="text-[11px]" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>
+                conf {(r.conf * 100).toFixed(0)}%
+              </div>
+            </div>
+            <div className="text-[13px] leading-relaxed mb-2" style={{ color: WR.text }}>{r.text}</div>
+            <div className="text-[11px] flex items-center gap-1" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+              <FileText size={10} />
+              {r.cite}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WRBenchmark() {
+  return (
+    <div className="col-span-12 md:col-span-6 lg:col-span-4 rounded-lg p-5" style={{ background: WR.surface, border: `1px solid ${WR.border}` }}>
+      <div className="flex items-center gap-2.5 mb-3">
+        <BarChart3 size={16} style={{ color: WR.amber }} />
+        <div className="font-bold text-sm">Cross-project benchmark</div>
+      </div>
+      <div className="text-[11px] uppercase tracking-[0.16em] mb-1" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+        n={BENCHMARK.n} comparable entitlements
+      </div>
+      <div className="flex items-baseline gap-2 mb-1">
+        <div className="text-5xl font-bold leading-none" style={{ color: WR.green, fontFamily: '"IBM Plex Mono", monospace' }}>
+          {BENCHMARK.passRate}%
+        </div>
+        <div className="text-xs" style={{ color: WR.textMuted }}>pass rate</div>
+      </div>
+      <div className="text-[12px] mb-4" style={{ color: WR.textMuted }}>
+        passed at first or second hearing in your network
+      </div>
+      <div className="grid grid-cols-2 gap-3 pt-3 border-t" style={{ borderColor: WR.border }}>
+        <WRStat label="Avg timeline" value={`${BENCHMARK.avgTimeline}mo`} sub={`yours: ${BENCHMARK.ours.timeline}mo`} positive />
+        <WRStat label="Avg revisions" value={BENCHMARK.avgRevisions} sub={`yours: ${BENCHMARK.ours.revisions}`} positive />
+      </div>
+      <div className="mt-3 px-3 py-2 rounded text-[12px] flex items-start gap-2" style={{ background: 'rgba(74,222,128,0.08)', color: WR.green, border: `1px solid ${WR.green}30` }}>
+        <Check size={12} style={{ marginTop: 2, flexShrink: 0 }} />
+        <span>Tracking 7pts above comparable pass rate.</span>
+      </div>
+    </div>
+  );
+}
+
+function WRStat({ label, value, sub, positive }) {
+  return (
+    <div>
+      <div className="text-[9px] uppercase tracking-[0.18em]" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>{label}</div>
+      <div className="text-lg font-bold mt-0.5" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{value}</div>
+      {sub && <div className="text-[11px]" style={{ color: positive ? WR.green : WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>{sub}</div>}
+    </div>
+  );
+}
+
+function WRAdversarial() {
+  return (
+    <div className="col-span-12 md:col-span-6 lg:col-span-4 rounded-lg overflow-hidden" style={{ background: WR.surface, border: `1px solid ${WR.border}` }}>
+      <div className="px-5 py-3 border-b flex items-center gap-2.5" style={{ borderColor: WR.border }}>
+        <Target size={16} style={{ color: WR.red }} />
+        <div className="font-bold text-sm">Adversarial intel</div>
+      </div>
+      <div>
+        {OPPOSITION_GROUPS.map((g, i) => (
+          <div key={g.name} className="px-5 py-3.5" style={{ borderTop: i === 0 ? 'none' : `1px solid ${WR.border}` }}>
+            <div className="flex items-center justify-between mb-2">
+              <div className="font-semibold text-[13px]">{g.name}</div>
+              <span className="text-[9px] uppercase tracking-[0.18em] font-bold px-2 py-0.5 rounded"
+                style={{ background: `${g.threatColor}18`, color: g.threatColor, fontFamily: '"IBM Plex Mono", monospace', border: `1px solid ${g.threatColor}40` }}>
+                {g.threat}
+              </span>
+            </div>
+            <div className="text-[12px] space-y-0.5" style={{ color: WR.textMuted }}>
+              <div><span style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Members </span>{g.members}  <span style={{ color: WR.textDim }}>·</span>  <span style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Lead </span>{g.leader}</div>
+              <div><span style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Issue </span>{g.issue}</div>
+              <div><span style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Funding </span>{g.funded}</div>
+              <div><span style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Activity </span>{g.activity}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WRInfluence() {
+  // Network graph: Whitfield (D2) at center — the most movable swing vote
+  const nodes = [
+    { id: 'DW',  x: 160, y: 110, r: 24, label: 'Whitfield', sub: 'D2',           color: WR.amber, center: true },
+    { id: 'CoS', x: 60,  y: 45,  r: 17, label: 'CoS',       sub: 'J. Reyes',     color: WR.green,  edge: { w: 3.0, c: WR.green } },
+    { id: 'DON', x: 260, y: 45,  r: 17, label: 'Top donor', sub: 'Bristol Cap.', color: WR.amber,  edge: { w: 1.8, c: WR.amber } },
+    { id: 'HOA', x: 60,  y: 175, r: 17, label: 'Linden HOA',sub: 'opposing',     color: WR.red,    edge: { w: 1.8, c: WR.red } },
+    { id: 'ALY', x: 260, y: 175, r: 17, label: 'Ally org',  sub: 'YIMBY Co',     color: WR.green,  edge: { w: 1.2, c: WR.green } },
+    { id: 'BIZ', x: 160, y: 20,  r: 14, label: 'Local biz', sub: '4 endorsers',  color: WR.blue,   edge: { w: 1.0, c: WR.blue } }
+  ];
+
+  return (
+    <div className="col-span-12 lg:col-span-4 rounded-lg p-5" style={{ background: WR.surface, border: `1px solid ${WR.border}` }}>
+      <div className="flex items-center gap-2.5 mb-1">
+        <Brain size={16} style={{ color: WR.amber }} />
+        <div className="font-bold text-sm">Influence map</div>
+      </div>
+      <div className="text-[11px] mb-3" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+        Whitfield (D2) · the swing vote
+      </div>
+      <svg viewBox="0 0 320 220" className="w-full" style={{ maxHeight: 220 }}>
+        {/* Edges */}
+        {nodes.filter(n => n.edge).map(n => (
+          <line key={`e-${n.id}`} x1="160" y1="110" x2={n.x} y2={n.y}
+            stroke={n.edge.c} strokeWidth={n.edge.w} strokeOpacity="0.55" />
+        ))}
+        {/* Nodes */}
+        {nodes.map(n => (
+          <g key={n.id}>
+            <circle cx={n.x} cy={n.y} r={n.r}
+              fill={WR.surface}
+              stroke={n.color}
+              strokeWidth={n.center ? 2.5 : 1.5} />
+            <text x={n.x} y={n.y + 4} textAnchor="middle"
+              fill={n.color}
+              style={{ fontFamily: '"IBM Plex Mono", monospace', fontWeight: 700, fontSize: n.center ? 13 : 10 }}>
+              {n.id}
+            </text>
+          </g>
+        ))}
+        {/* Labels below nodes */}
+        {nodes.filter(n => !n.center).map(n => (
+          <g key={`l-${n.id}`}>
+            <text x={n.x} y={n.y + n.r + 14} textAnchor="middle"
+              fill={WR.text}
+              style={{ fontSize: 10, fontWeight: 600 }}>{n.label}</text>
+            <text x={n.x} y={n.y + n.r + 26} textAnchor="middle"
+              fill={WR.textDim}
+              style={{ fontSize: 9, fontFamily: '"IBM Plex Mono", monospace' }}>{n.sub}</text>
+          </g>
+        ))}
+      </svg>
+      <div className="text-[12px] mt-2" style={{ color: WR.textMuted }}>
+        Strongest mover: <strong style={{ color: WR.green }}>Chief of Staff (J. Reyes)</strong> — supportive on housing supply.
+      </div>
+    </div>
+  );
+}
+
+function WRPulse() {
+  return (
+    <div className="rounded-lg overflow-hidden" style={{ background: WR.surface, border: `1px solid ${WR.border}` }}>
+      <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: WR.border }}>
+        <div className="flex items-center gap-3">
+          <Activity size={16} style={{ color: WR.amber }} />
+          <div className="font-bold text-sm">Live pulse</div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full wr-pulse" style={{ background: WR.green, boxShadow: `0 0 6px ${WR.green}` }} />
+            <span className="text-[11px]" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>live · auto-refresh 30s</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        {PULSE_FEED.map((p, i) => {
+          const color = p.type === 'positive' ? WR.green
+            : p.type === 'critical' ? WR.red
+            : p.type === 'warning' ? WR.amber
+            : WR.blue;
+          return (
+            <div key={i} className="px-5 py-3 flex items-start gap-4" style={{ borderTop: i === 0 ? 'none' : `1px solid ${WR.border}` }}>
+              <div className="w-20 flex-shrink-0 text-[11px]" style={{ color: WR.textDim, fontFamily: '"IBM Plex Mono", monospace' }}>{p.time}</div>
+              <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: color, boxShadow: `0 0 4px ${color}` }} />
+              <div className="text-[13px] flex-1" style={{ color: WR.text }}>{p.text}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function WRFooter() {
+  return (
+    <div className="border-t mt-2 px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ borderColor: WR.border, background: WR.surface }}>
+      <div className="text-[11px] flex items-center gap-2" style={{ color: WR.textMuted, fontFamily: '"IBM Plex Mono", monospace' }}>
+        <Lock size={11} />
+        <span>War Room · Restricted access · All views audit-logged</span>
+      </div>
+      <a href="/lattice-skunkworks-dossier.pdf" target="_blank" rel="noopener noreferrer"
+        className="text-[11px] flex items-center gap-1.5 hover:underline"
+        style={{ color: WR.amber, fontFamily: '"IBM Plex Mono", monospace', textDecoration: 'none' }}>
+        <FileText size={11} />
+        <span>Sources & methodology · public records, voter files (state-gated), licensed OSINT, cross-project network</span>
+        <ArrowUpRight size={11} />
+      </a>
+    </div>
+  );
+}
+
+/* ============================================================
+   WarRoomLaunch — amber-glowing button in top bar
+   ============================================================ */
+
+function WarRoomLaunch({ onClick, compact }) {
+  return (
+    <button
+      onClick={onClick}
+      title="Open War Room — intelligence operations layer"
+      className="flex items-center gap-2 rounded-md font-semibold text-sm transition-all"
+      style={{
+        background: 'linear-gradient(135deg, #1A0F08 0%, #2A1810 100%)',
+        color: '#FFA840',
+        padding: compact ? '8px 12px' : '8px 14px',
+        border: '1px solid rgba(255,168,64,0.5)',
+        boxShadow: '0 0 12px rgba(255,168,64,0.15), inset 0 1px 0 rgba(255,168,64,0.1)',
+        minHeight: 44,
+        whiteSpace: 'nowrap'
+      }}
+    >
+      <Radar size={14} style={{ flexShrink: 0 }} />
+      {compact ? 'War Room' : 'War Room'}
+    </button>
   );
 }

@@ -167,8 +167,8 @@ export default function App() {
 
   function body() {
     if (view === 'builder') return <BuilderConsole />;
-    if (styleVariant === 'A') return view === 'public' ? <StyleAPublic phase={phase} /> : <StyleAInternal phase={phase} />;
-    return view === 'public' ? <StyleBPublic phase={phase} /> : <StyleBInternal phase={phase} />;
+    if (view === 'internal') return <StyleBInternal phase={phase} />; // Internal dashboard is always the light/clean version, regardless of Design choice
+    return styleVariant === 'A' ? <StyleAPublic phase={phase} /> : <StyleBPublic phase={phase} />;
   }
 
   return (
@@ -190,9 +190,11 @@ export default function App() {
 
 function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase }) {
   const isA = styleVariant === 'A';
-  const isInternalDark = isA && view === 'internal';
+  const isBuilder = view === 'builder';
+  // Only Builder gets the dark engineering top bar. Internal stays light.
+  const dark = isBuilder;
 
-  const bg = isInternalDark ? 'bg-[#0A1628] border-white/10 text-stone-100'
+  const bg = isBuilder ? 'bg-[#070A12] border-white/10 text-stone-100'
     : isA ? 'bg-[#F5F0E6] border-stone-300 text-stone-900'
     : 'bg-white border-gray-200 text-gray-900';
 
@@ -203,7 +205,7 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         {/* ROW 1 — wordmark always; Design + View on desktop (md+) only */}
         <div className="flex items-center gap-3 py-3">
-          <Wordmark isA={isA} dark={isInternalDark} />
+          <Wordmark isA={isA} dark={dark} />
 
           <div className="flex-1" />
 
@@ -222,7 +224,7 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
                 ]}
                 onChange={setStyleVariant}
                 isA={isA}
-                dark={isInternalDark}
+                dark={dark}
               />
             </div>
             <SegmentedToggle
@@ -235,7 +237,7 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
               ]}
               onChange={setView}
               isA={isA}
-              dark={isInternalDark}
+              dark={dark}
             />
           </div>
         </div>
@@ -255,7 +257,7 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
             ]}
             onChange={setStyleVariant}
             isA={isA}
-            dark={isInternalDark}
+            dark={dark}
             fullWidth
           />
         </div>
@@ -272,56 +274,97 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
             ]}
             onChange={setView}
             isA={isA}
-            dark={isInternalDark}
+            dark={dark}
             fullWidth
           />
         </div>
 
-        {/* ROW 3 — phase pills (scrollable on small screens). Hidden in Builder view. */}
-        {view !== 'builder' && (
-        <div className="pb-3 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto">
-          <div className="flex items-center gap-2 min-w-max">
-            <span className={`${monoClass} text-[11px] uppercase tracking-[0.18em] mr-2 whitespace-nowrap ${
-              isInternalDark ? 'text-stone-500' : isA ? 'text-stone-500' : 'text-gray-500'
-            }`}>Phase</span>
-            {PHASES.map((p) => {
-              const active = phase === p.id;
-              const label = isA ? p.labelA : p.labelB;
-              const sub = isA ? p.subA : p.subB;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setPhase(p.id)}
-                  className={`px-3 py-2 text-left transition-all whitespace-nowrap min-h-[44px] ${
-                    isA ? 'rounded-sm' : 'rounded-md border'
-                  } ${
-                    active
-                      ? isInternalDark
-                        ? 'bg-[#C8501F] text-[#0A1628] font-semibold border-[#C8501F]'
-                        : isA
-                          ? 'bg-[#0A1628] text-[#F5F0E6] font-semibold border-[#0A1628]'
-                          : 'bg-[#0050B4] text-white font-semibold border-[#0050B4]'
-                      : isInternalDark
-                        ? 'text-stone-400 hover:text-stone-100 border-white/10'
-                        : isA
-                          ? 'text-stone-600 hover:text-stone-900 border-transparent'
-                          : 'text-gray-700 hover:bg-gray-50 border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`${monoClass} text-xs ${isA ? (active ? 'opacity-90' : 'opacity-60') : ''}`}>
+        {/* ROW 4 — Phase pills (only on Public; hidden on Internal & Builder). */}
+        {view === 'public' && (
+          <>
+            {/* Mobile: compact stepper — three small pills + active phase label. No horizontal scroll. */}
+            <div className="md:hidden pb-3">
+              <div className="flex items-center gap-2 mb-2">
+                {PHASES.map((p) => {
+                  const active = phase === p.id;
+                  const fg = active
+                    ? (isA ? '#F5F0E6' : '#FFFFFF')
+                    : (isA ? '#44403C' : '#374151');
+                  const bg = active
+                    ? (isA ? '#0A1628' : '#0050B4')
+                    : 'transparent';
+                  const bd = active
+                    ? (isA ? '#0A1628' : '#0050B4')
+                    : (isA ? 'rgba(28,25,23,0.18)' : '#D1D5DB');
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => setPhase(p.id)}
+                      aria-label={`Phase ${p.id}: ${isA ? p.labelA : p.labelB}`}
+                      style={{
+                        flex: 1, minHeight: 44, padding: '8px 10px',
+                        borderRadius: isA ? 3 : 6,
+                        background: bg, color: fg,
+                        border: `1px solid ${bd}`,
+                        fontWeight: active ? 700 : 500,
+                        fontSize: 13,
+                        fontFamily: 'IBM Plex Mono, monospace',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.15s, color 0.15s'
+                      }}
+                    >
                       {String(p.id).padStart(2, '0')}
-                    </span>
-                    <span className="text-sm">{label}</span>
-                  </div>
-                  {!isA && (
-                    <div className="text-[11px] mt-0.5 hidden md:block">{sub}</div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className={`text-xs ${isA ? 'text-stone-700' : 'text-gray-700'}`}>
+                <span className={`${monoClass} uppercase tracking-[0.14em] mr-2`}>Phase {phase}</span>
+                <span>{isA ? PHASES[phase - 1].labelA : PHASES[phase - 1].labelB}</span>
+              </div>
+            </div>
+
+            {/* Desktop: full label pills */}
+            <div className="hidden md:block pb-3">
+              <div className="flex items-center gap-2">
+                <span className={`${monoClass} text-[11px] uppercase tracking-[0.18em] mr-2 whitespace-nowrap ${
+                  isA ? 'text-stone-500' : 'text-gray-500'
+                }`}>Phase</span>
+                {PHASES.map((p) => {
+                  const active = phase === p.id;
+                  const label = isA ? p.labelA : p.labelB;
+                  const sub = isA ? p.subA : p.subB;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => setPhase(p.id)}
+                      className={`px-3 py-2 text-left transition-all whitespace-nowrap min-h-[44px] ${
+                        isA ? 'rounded-sm' : 'rounded-md border'
+                      } ${
+                        active
+                          ? isA
+                            ? 'bg-[#0A1628] text-[#F5F0E6] font-semibold border-[#0A1628]'
+                            : 'bg-[#0050B4] text-white font-semibold border-[#0050B4]'
+                          : isA
+                            ? 'text-stone-600 hover:text-stone-900 border-transparent'
+                            : 'text-gray-700 hover:bg-gray-50 border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`${monoClass} text-xs ${isA ? (active ? 'opacity-90' : 'opacity-60') : ''}`}>
+                          {String(p.id).padStart(2, '0')}
+                        </span>
+                        <span className="text-sm">{label}</span>
+                      </div>
+                      {!isA && (
+                        <div className="text-[11px] mt-0.5">{sub}</div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -341,7 +384,7 @@ function Wordmark({ isA, dark }) {
         <div className={`${isA ? 'font-mono-a' : 'font-display-b'} text-[11px] uppercase tracking-[0.14em] truncate font-medium ${
           dark ? 'text-stone-300' : isA ? 'text-stone-700' : 'text-gray-700'
         }`}>
-          Engagement Platform
+          Site-Builder for Lobbying Firms
         </div>
       </div>
     </div>
@@ -366,7 +409,9 @@ function SegmentedToggle({ label, value, options, onChange, isA, dark, fullWidth
     if (v === 'internal') return isA
       ? { bg: '#1A2842', fg: '#F5F0E6' }   // Editorial: lighter navy variant — same family as Public navy
       : { bg: '#003D6B', fg: '#FFFFFF' };  // Accessible: darker blue — same family as Public blue
-    if (v === 'builder') return { bg: '#0A0E1A', fg: '#5CFFB8', ring: '#5CFFB8' };
+    if (v === 'builder') return dark
+      ? { bg: '#5CFFB8', fg: '#0A0E1A' }                              // dark top bar: bright cyan pill pops
+      : { bg: '#0A0E1A', fg: '#5CFFB8', ring: '#5CFFB8' };            // light top bar: dark pill with cyan ring
     return theme.activeDefault;
   }
 
@@ -613,7 +658,7 @@ function DocLibraryA({ compact }) {
       </div>
       <div className="flex items-center gap-2 mb-6">
         <Shield className="w-3 h-3 text-stone-500 flex-shrink-0" />
-        <span className="font-mono-a text-[10px] uppercase tracking-[0.16em] text-stone-500">Every answer cites the source. We don\u2019t generate zoning claims.</span>
+        <span className="font-mono-a text-[10px] uppercase tracking-[0.16em] text-stone-500">Every answer cites the source. We don’t generate zoning claims.</span>
       </div>
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-2">
@@ -731,8 +776,8 @@ function CommentsA() {
 
 function ResponsivenessA({ compact }) {
   return (
-    <SectionA title="How we\u2019re listening" mono={compact ? '04' : '02'}>
-      <p className="text-stone-700 max-w-2xl mb-6 leading-relaxed">Every concern is tagged, clustered, and reviewed weekly. Here\u2019s what changed.</p>
+    <SectionA title="How we’re listening" mono={compact ? '04' : '02'}>
+      <p className="text-stone-700 max-w-2xl mb-6 leading-relaxed">Every concern is tagged, clustered, and reviewed weekly. Here’s what changed.</p>
       <div className="border border-stone-300 bg-white/40 rounded-sm overflow-hidden">
         <div className="grid grid-cols-12 gap-4 px-4 sm:px-5 py-3 border-b border-stone-300 bg-white/30">
           <div className="col-span-12 sm:col-span-4 font-mono-a text-[10px] uppercase tracking-[0.18em] text-stone-500">You said</div>
@@ -1198,7 +1243,7 @@ function VisionB() {
     { icon: Trees, t: '1.2-acre public plaza', s: 'Permanently dedicated open space with a farmers-market easement and a maintenance endowment.' }
   ];
   return (
-    <SectionB kicker="What\u2019s being proposed" title="What we want to build" intro="Three components, all designed to fit the character of the Linden Avenue corridor.">
+    <SectionB kicker="What’s being proposed" title="What we want to build" intro="Three components, all designed to fit the character of the Linden Avenue corridor.">
       <div className="grid grid-cols-12 gap-4 sm:gap-6">
         {items.map((c, i) => (
           <article key={i} className="col-span-12 md:col-span-4 rounded-lg border-2 p-6" style={{ borderColor: B.border, background: B.bg }}>
@@ -1218,7 +1263,7 @@ function DocLibraryB({ compact }) {
   const [q, setQ] = useState('');
   const [answer, setAnswer] = useState(null);
   return (
-    <SectionB kicker="Documents & answers" title="Have a question? Ask the project documents." intro="Type any question. Every answer links back to the document it came from — the Comprehensive Plan, the Zoning Code, or the project\u2019s own filings.">
+    <SectionB kicker="Documents & answers" title="Have a question? Ask the project documents." intro="Type any question. Every answer links back to the document it came from — the Comprehensive Plan, the Zoning Code, or the project’s own filings.">
       <div className="rounded-lg border-2 mb-3 flex items-stretch" style={{ borderColor: B.borderStrong, background: B.bg }}>
         <div className="flex items-center pl-4"><Search className="w-5 h-5" style={{ color: B.textMuted }} /></div>
         <input value={q} onChange={(e)=>setQ(e.target.value)}
@@ -1401,7 +1446,7 @@ const BField = ({ label, hint, children }) => (
 
 function ResponsivenessB({ compact }) {
   return (
-    <SectionB kicker="How we\u2019re listening" title="What changed because of your feedback" intro="Every concern raised on this site is tagged and reviewed weekly. Here is what changed in the plan, and which city document supports the change.">
+    <SectionB kicker="How we’re listening" title="What changed because of your feedback" intro="Every concern raised on this site is tagged and reviewed weekly. Here is what changed in the plan, and which city document supports the change.">
       <div className="rounded-lg border-2 overflow-hidden" style={{ borderColor: B.border, background: B.bg }}>
         {/* Desktop table */}
         <table className="hidden md:table w-full">
@@ -1492,7 +1537,7 @@ function FAQB() {
     ['What happens at the hearing?',  'The Planning Commission reviews the project and makes a recommendation. The City Council then holds the final vote.']
   ];
   return (
-    <SectionB kicker="FAQ" title="Common questions" intro="If you don\u2019t see your question here, send it to the project team and we will add it.">
+    <SectionB kicker="FAQ" title="Common questions" intro="If you don’t see your question here, send it to the project team and we will add it.">
       <div className="space-y-3">
         {faqs.map(([q, a], i) => (
           <details key={i} className="rounded-lg border-2 p-5 group" style={{ borderColor: B.border, background: B.bg }}>

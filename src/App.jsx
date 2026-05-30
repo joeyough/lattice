@@ -194,90 +194,108 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
   // Only Builder gets the dark engineering top bar. Internal stays light.
   const dark = isBuilder;
 
-  const bg = isBuilder ? 'bg-[#070A12] border-white/10 text-stone-100'
-    : isA ? 'bg-[#F5F0E6] border-stone-300 text-stone-900'
-    : 'bg-white border-gray-200 text-gray-900';
+  // Inline style for top bar — guarantees opaque background renders immediately
+  // (Tailwind dynamic className interpolation can have paint-timing issues)
+  const topBarStyle = isBuilder
+    ? { background: '#070A12', borderBottom: '1px solid rgba(255,255,255,0.10)', color: '#F5F5F4' }
+    : isA
+      ? { background: '#F5F0E6', borderBottom: '1px solid #D6D3D1', color: '#1C1917' }
+      : { background: '#FFFFFF', borderBottom: '1px solid #E5E7EB', color: '#111827' };
 
   const monoClass = isA ? 'font-mono-a' : 'font-display-b';
 
   return (
-    <div className={`sticky top-0 z-50 border-b ${bg}`}>
+    <div className="sticky top-0 z-50" style={topBarStyle}>
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
-        {/* ROW 1 — wordmark always; Design + View on desktop (md+) only */}
+        {/* ROW 1 — wordmark + mode-specific controls */}
         <div className="flex items-center gap-3 py-3">
           <Wordmark isA={isA} dark={dark} />
-
           <div className="flex-1" />
 
-          {/* Design + View — desktop */}
-          <div className="hidden md:flex items-center gap-2">
-            <div
-              style={{ opacity: view === 'builder' ? 0.55 : 1, transition: 'opacity 0.2s' }}
-              title={view === 'builder' ? 'Design preset — applied when you return to Public or Internal' : ''}
+          {!isBuilder ? (
+            <>
+              {/* Desktop: Design + View (Public/Internal only) + Builder launch */}
+              <div className="hidden md:flex items-center gap-2">
+                <SegmentedToggle
+                  label="Design"
+                  value={styleVariant}
+                  options={[
+                    { v: 'B', label: 'Accessible', title: 'High-contrast design meeting WCAG accessibility standards.', badge: 'Recommended' },
+                    { v: 'A', label: 'Editorial',  title: 'Magazine-style design with serif headlines.' }
+                  ]}
+                  onChange={setStyleVariant}
+                  isA={isA}
+                  dark={dark}
+                />
+                <SegmentedToggle
+                  label="View"
+                  value={view}
+                  options={[
+                    { v: 'public',   label: 'Public',   icon: Eye },
+                    { v: 'internal', label: 'Internal', icon: Lock }
+                  ]}
+                  onChange={setView}
+                  isA={isA}
+                  dark={dark}
+                />
+                <BuilderLaunch onClick={() => setView('builder')} />
+              </div>
+
+              {/* Mobile: just the Builder launch button on row 1 */}
+              <div className="md:hidden">
+                <BuilderLaunch compact onClick={() => setView('builder')} />
+              </div>
+            </>
+          ) : (
+            // BUILDER MODE — only an Exit button
+            <button
+              onClick={() => setView('public')}
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold transition-colors"
+              style={{
+                background: 'transparent',
+                color: '#5CFFB8',
+                border: '1px solid rgba(92,255,184,0.45)',
+                minHeight: 44
+              }}
             >
+              <ChevronLeft size={16} /> Exit Builder
+            </button>
+          )}
+        </div>
+
+        {/* Mobile rows for Design + View — only when NOT in Builder */}
+        {!isBuilder && (
+          <>
+            <div className="md:hidden pb-3">
               <SegmentedToggle
                 label="Design"
                 value={styleVariant}
                 options={[
-                  { v: 'B', label: 'Accessible', title: 'Accessible: high-contrast design meeting WCAG accessibility standards. Easier to read for older audiences, low-vision users, and stakeholders on mobile.', badge: 'Recommended' },
-                  { v: 'A', label: 'Editorial',  title: 'Editorial: magazine-style design with serif headlines. Good for general audiences.' }
+                  { v: 'B', label: 'Accessible', title: 'High-contrast design meeting WCAG accessibility standards.', badge: 'Recommended' },
+                  { v: 'A', label: 'Editorial',  title: 'Magazine-style design with serif headlines.' }
                 ]}
                 onChange={setStyleVariant}
                 isA={isA}
                 dark={dark}
+                fullWidth
               />
             </div>
-            <SegmentedToggle
-              label="View"
-              value={view}
-              options={[
-                { v: 'public',   label: 'Public',   icon: Eye },
-                { v: 'internal', label: 'Internal', icon: Lock },
-                { v: 'builder',  label: 'Builder',  icon: Sparkles }
-              ]}
-              onChange={setView}
-              isA={isA}
-              dark={dark}
-            />
-          </div>
-        </div>
-
-        {/* ROW 2 mobile only — Design full-width (dimmed in Builder) */}
-        <div
-          className="md:hidden pb-3"
-          style={{ opacity: view === 'builder' ? 0.55 : 1, transition: 'opacity 0.2s' }}
-          title={view === 'builder' ? 'Design preset — applied when you return to Public or Internal' : ''}
-        >
-          <SegmentedToggle
-            label="Design"
-            value={styleVariant}
-            options={[
-              { v: 'B', label: 'Accessible', title: 'Accessible: high-contrast design meeting WCAG accessibility standards. Easier to read for older audiences, low-vision users, and stakeholders on mobile.', badge: 'Recommended' },
-              { v: 'A', label: 'Editorial',  title: 'Editorial: magazine-style design with serif headlines. Good for general audiences.' }
-            ]}
-            onChange={setStyleVariant}
-            isA={isA}
-            dark={dark}
-            fullWidth
-          />
-        </div>
-
-        {/* ROW 3 mobile only — View full-width */}
-        <div className="md:hidden pb-3">
-          <SegmentedToggle
-            label="View"
-            value={view}
-            options={[
-              { v: 'public',   label: 'Public',   icon: Eye },
-              { v: 'internal', label: 'Internal', icon: Lock },
-              { v: 'builder',  label: 'Builder',  icon: Sparkles }
-            ]}
-            onChange={setView}
-            isA={isA}
-            dark={dark}
-            fullWidth
-          />
-        </div>
+            <div className="md:hidden pb-3">
+              <SegmentedToggle
+                label="View"
+                value={view}
+                options={[
+                  { v: 'public',   label: 'Public',   icon: Eye },
+                  { v: 'internal', label: 'Internal', icon: Lock }
+                ]}
+                onChange={setView}
+                isA={isA}
+                dark={dark}
+                fullWidth
+              />
+            </div>
+          </>
+        )}
 
         {/* ROW 4 — Phase pills (only on Public; hidden on Internal & Builder). */}
         {view === 'public' && (
@@ -318,9 +336,13 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
                   );
                 })}
               </div>
-              <div className={`text-xs ${isA ? 'text-stone-700' : 'text-gray-700'}`}>
-                <span className={`${monoClass} uppercase tracking-[0.14em] mr-2`}>Phase {phase}</span>
-                <span>{isA ? PHASES[phase - 1].labelA : PHASES[phase - 1].labelB}</span>
+              <div>
+                <div className={`${monoClass} text-[10px] uppercase tracking-[0.18em] mb-1 font-medium ${isA ? 'text-stone-500' : 'text-gray-500'}`}>
+                  Phase {phase} of 3
+                </div>
+                <div className={`text-base font-semibold leading-snug ${isA ? 'text-stone-900' : 'text-gray-900'}`}>
+                  {isA ? PHASES[phase - 1].labelA : PHASES[phase - 1].labelB}
+                </div>
               </div>
             </div>
 
@@ -388,6 +410,27 @@ function Wordmark({ isA, dark }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function BuilderLaunch({ onClick, compact }) {
+  return (
+    <button
+      onClick={onClick}
+      title="Open Builder — set up a new project"
+      className="flex items-center gap-2 rounded-md font-semibold text-sm transition-all"
+      style={{
+        background: '#0A0E1A',
+        color: '#5CFFB8',
+        padding: compact ? '8px 12px' : '8px 14px',
+        boxShadow: '0 0 0 1px rgba(92,255,184,0.4), 0 1px 2px rgba(0,0,0,0.2)',
+        minHeight: 44,
+        whiteSpace: 'nowrap'
+      }}
+    >
+      <Sparkles size={14} style={{ flexShrink: 0 }} />
+      {compact ? 'Builder' : 'Open Builder'}
+    </button>
   );
 }
 

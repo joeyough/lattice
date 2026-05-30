@@ -39,14 +39,14 @@ const FONTS = `
    ============================================================ */
 
 const PROJECT = {
-  name: 'Cherry Creek Commons',
-  location: 'Cherrywood, Colorado',
-  applicant: 'Meridian Development Partners',
-  firm: 'Lattice Public Affairs',
-  parcels: '12.4 acres',
-  zoning: { current: 'I-1 (Light Industrial)', proposed: 'MX-3 (Mixed-Use, Mid-Rise)' },
+  name: 'Cherry Creek West',
+  location: 'Cherry Creek, Denver, Colorado',
+  applicant: 'East West Partners',
+  firm: 'Wall Kane Consulting',
+  parcels: '13 acres · 4 blocks',
+  zoning: { current: 'C-CCN-8 (Cherry Creek North 8)', proposed: 'C-MX-8 (Mixed-Use, 8-story)' },
   description:
-    '240 residences, 18,000 sq ft of neighborhood retail, and a 1.2-acre public plaza on the former Henderson Industrial site.',
+    '825 residences, 600,000 sq ft of office, 100,000 sq ft of neighborhood retail, 4 acres of public open space, and 2,000 underground parking spaces — connecting Cherry Creek back to the waterway, from University Boulevard to Clayton Lane, between 1st Avenue and the Cherry Creek waterway.',
   hearing: 'October 14, 2026',
   stats: { comments: 1247, supporters: 783, opposed: 312, movable: 152 }
 };
@@ -54,17 +54,17 @@ const PROJECT = {
 // Two label sets: terse (Style A) vs. plain-English (Style B)
 const PHASES = [
   { id: 1, labelA: 'Pre-Submittal',  labelB: 'Introducing the project',         subA: 'Vision & introduction',      subB: 'Telling the community what\'s being proposed and why',                window: 'Apr — Jul 2026' },
-  { id: 2, labelA: 'Referral Period',labelB: 'Public comment & agency review',  subA: 'Comment & agency review',    subB: 'Residents, businesses, and city departments share input',                window: 'Aug — Sep 2026' },
+  { id: 2, labelA: 'Referral Period',labelB: 'Public comment & referral review',  subA: 'Comment & referral review',    subB: 'Residents, businesses, and city departments share input',                window: 'Aug — Sep 2026' },
   { id: 3, labelA: 'Hearing Prep',   labelB: 'Planning Commission & Council',   subA: 'Commission & Council',       subB: 'Final hearings where the project is voted on',                           window: 'Oct — Nov 2026' }
 ];
 
 const PROCESS = [
   { key: 'pre', labelA: 'Pre-Submittal',       labelB: 'Project introduced' },
   { key: 'sub', labelA: 'Formal Submittal',    labelB: 'Application submitted' },
-  { key: 'ref', labelA: 'Referral Period',     labelB: 'Agency review' },
+  { key: 'ref', labelA: 'Referral Period',     labelB: 'Referral review' },
   { key: 'pub', labelA: 'Public Comment',      labelB: 'Public comment period' },
   { key: 'pc',  labelA: 'Planning Commission', labelB: 'Planning Commission hearing' },
-  { key: 'cc',  labelA: 'City Council',        labelB: 'City Council vote' }
+  { key: 'cc',  labelA: 'City Council',        labelB: 'City Council hearing' }
 ];
 const PHASE_TO_STEP = { 1: 0, 2: 2, 3: 4 };
 
@@ -91,29 +91,29 @@ const COUNCIL = [
 
 const RESPONSE_QUEUE = [
   { id: 'r-184', theme: 'Building Height',
-    excerpt: 'A 5-story building will tower over our neighborhood and block the mountain view from Linden Park…',
-    draft: 'We heard the concern about scale at the western edge. The revised site plan steps the building down to 3 stories along Linden Avenue and preserves the established view corridor identified in the 2021 Comprehensive Plan (§4.3, Neighborhood Edge Transitions, p. 87). The full elevation study is in the Document Library.',
+    excerpt: 'An 8-story building will tower over our neighborhood and block the mountain view from Cherry Creek North…',
+    draft: 'We heard the concern about scale at the western edge. The revised site plan steps the building down to 3 stories along University Boulevard and preserves the established view corridor identified in the 2021 Comprehensive Plan (§4.3, Neighborhood Edge Transitions, p. 87). The full elevation study is in the Document Library.',
     citation: 'Comp Plan §4.3, p. 87', status: 'awaiting_approval', score: 0.91 },
   { id: 'r-201', theme: 'Parking Supply',
     excerpt: 'There will not be enough parking. The streets are already packed during weekday evenings…',
     draft: 'Thank you for flagging on-street demand. The current proposal provides 1.4 spaces per residence (336 total) plus 42 retail spaces, exceeding the MX-3 minimum (1.1) per Zoning Code §17.40.040. We are commissioning a third-party parking study before the Planning Commission hearing.',
     citation: 'Zoning Code §17.40.040', status: 'awaiting_approval', score: 0.87 },
   { id: 'r-217', theme: 'Affordable Housing %',
-    excerpt: 'Why isn\'t more of this housing affordable? Cherrywood needs deed-restricted units, not market-rate luxury…',
-    draft: '[DRAFT — needs Lattice review] The current proposal includes 12% affordable units at 80% AMI, exceeding the 10% inclusionary requirement. We are exploring a partnership with the Cherrywood Housing Trust to deepen affordability on a portion of units.',
+    excerpt: 'Why isn\'t more of this housing affordable? Cherry Creek needs deed-restricted units, not market-rate luxury…',
+    draft: '[DRAFT — needs Lattice review] The current proposal includes 12% affordable units at 80% AMI, exceeding the 10% inclusionary requirement. We are exploring a partnership with the Denver Housing Trust to deepen affordability on a portion of units.',
     citation: 'IHO §17.62.020', status: 'flagged_for_review', score: 0.62 }
 ];
 
 const RECENT_COMMENTS = [
-  { name: 'James K.',  zip: '80206', tag: 'Resident', text: 'Love the plaza idea — Cherrywood needs more walkable space.', stance: 'support' },
-  { name: 'Maria S.',  zip: '80207', tag: 'Resident', text: 'Traffic on Linden is already terrible. How is 240 units going to help?', stance: 'oppose' },
+  { name: 'James K.',  zip: '80206', tag: 'Resident', text: 'Love the plaza idea — Cherry Creek needs more walkable space.', stance: 'support' },
+  { name: 'Maria S.',  zip: '80207', tag: 'Resident', text: 'Traffic on University is already terrible. How is 825 units going to help?', stance: 'oppose' },
   { name: 'David L.',  zip: '80206', tag: 'Business', text: 'Ground-floor retail would be a huge win for the corridor.', stance: 'support' },
   { name: 'Anne R.',   zip: '80208', tag: 'Resident', text: 'Five stories is too tall for this block. Step it down or reduce units.', stance: 'oppose' },
   { name: 'Cory P.',   zip: '80206', tag: 'Resident', text: 'Need to see real affordable units, not just compliance minimums.', stance: 'movable' }
 ];
 
 const RESPONSIVENESS = [
-  { concern: 'Building height at western edge', change: 'Stepped down to 3 stories along Linden',         doc: 'Comp Plan §4.3' },
+  { concern: 'Building height at western edge', change: 'Stepped down to 3 stories along University',         doc: 'Comp Plan §4.3' },
   { concern: 'Loss of mature trees',            change: 'Revised plan preserves 18 of 24 specimen trees', doc: 'Landscape Std §6.2' },
   { concern: 'Inadequate plaza programming',    change: 'Added farmers-market easement + plaza endowment', doc: 'Comp Plan §3.1' },
   { concern: 'Wildlife corridor disruption',    change: 'Increased setback to 60 ft along creek',          doc: 'WCO §22.04' },
@@ -131,7 +131,7 @@ const HEAT_GRID = [
 
 const SAMPLE_ANSWERS = {
   height: {
-    text: 'The proposed building height of 3–5 stories complies with the MX-3 district maximum of 65 feet. Along the western edge facing Linden Avenue, the revised plan steps down to 3 stories per the Neighborhood Edge Transitions requirement.',
+    text: 'The proposed building height of 3–5 stories complies with the MX-3 district maximum of 65 feet. Along the western edge facing University Boulevard, the revised plan steps down to 3 stories per the Neighborhood Edge Transitions requirement.',
     citations: [
       { doc: 'Comprehensive Plan', loc: '§4.3, p. 87' },
       { doc: 'Zoning Code',        loc: '§17.32.060' }
@@ -142,7 +142,7 @@ const SAMPLE_ANSWERS = {
     citations: [{ doc: 'Zoning Code', loc: '§17.40.040' }]
   },
   affordable: {
-    text: 'The plan includes 12% affordable units restricted at 80% AMI, exceeding the 10% inclusionary minimum. The applicant is exploring deeper affordability through a partnership with the Cherrywood Housing Trust.',
+    text: 'The plan includes 12% affordable units restricted at 80% AMI, exceeding the 10% inclusionary minimum. The applicant is exploring deeper affordability through a partnership with the Denver Housing Trust.',
     citations: [
       { doc: 'Inclusionary Housing Ordinance', loc: '§17.62.020' },
       { doc: 'Housing Master Plan',           loc: '§2.4' }
@@ -165,6 +165,8 @@ export default function App() {
   const [styleVariant, setStyleVariant] = useState('B');
   const [view, setView] = useState('public');
   const [phase, setPhase] = useState(2);
+  const [bannerVisible, setBannerVisible] = useState(true);
+  const isToolMode = view === 'builder' || view === 'warroom';
 
   function body() {
     if (view === 'builder') return <BuilderConsole />;
@@ -176,12 +178,63 @@ export default function App() {
   return (
     <div className={styleVariant === 'A' ? 'font-body-a' : 'font-body-b'}>
       <style>{FONTS}</style>
+      {bannerVisible && !isToolMode && (
+        <DemoBanner onDismiss={() => setBannerVisible(false)} />
+      )}
       <TopBar
         styleVariant={styleVariant} setStyleVariant={setStyleVariant}
         view={view} setView={setView}
         phase={phase} setPhase={setPhase}
       />
       {body()}
+    </div>
+  );
+}
+
+function DemoBanner({ onDismiss }) {
+  return (
+    <div
+      style={{
+        background: 'linear-gradient(90deg, #FEF3C7 0%, #FDE68A 100%)',
+        borderBottom: '1px solid rgba(180,130,40,0.3)',
+        color: '#78350F',
+        fontSize: 13,
+        lineHeight: 1.45
+      }}
+    >
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-2.5 flex items-start gap-3">
+        <div
+          className="hidden sm:flex flex-shrink-0 w-7 h-7 rounded-full items-center justify-center font-bold text-xs mt-0.5"
+          style={{ background: '#92400E', color: '#FEF3C7' }}
+          aria-hidden="true"
+        >
+          L
+        </div>
+        <div className="flex-1 min-w-0">
+          {/* Line 1: brand + tagline */}
+          <div className="mb-1">
+            <strong style={{ fontWeight: 800, letterSpacing: '0.04em' }}>LATTICE</strong>
+            <span style={{ opacity: 0.7 }}> — engagement platform for boutique lobby firms.</span>
+            <span className="hidden sm:inline" style={{ opacity: 0.9 }}>{' '}Demo for <strong style={{ fontWeight: 700 }}>Wall Kane Consulting</strong>, themed to the <strong style={{ fontWeight: 700 }}>Cherry Creek West</strong> rezoning work.</span>
+          </div>
+          {/* Line 2: three-wave navigation */}
+          <div style={{ fontSize: 12, opacity: 0.92 }}>
+            <span><strong style={{ fontWeight: 700 }}>Wave 1</strong> Public site</span>
+            <span style={{ opacity: 0.5 }}> · </span>
+            <span><strong style={{ fontWeight: 700 }}>Wave 2</strong> Internal dashboard <span className="hidden sm:inline" style={{ opacity: 0.7 }}>(toggle above)</span></span>
+            <span style={{ opacity: 0.5 }}> · </span>
+            <span><strong style={{ fontWeight: 700 }}>Wave 3</strong> War Room + Builder <span className="hidden sm:inline" style={{ opacity: 0.7 }}>(top right)</span></span>
+          </div>
+        </div>
+        <button
+          onClick={onDismiss}
+          aria-label="Dismiss banner"
+          className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold text-base transition-colors hover:opacity-70 mt-0.5"
+          style={{ background: 'rgba(120,53,15,0.10)', color: '#78350F' }}
+        >
+          ×
+        </button>
+      </div>
     </div>
   );
 }
@@ -237,8 +290,8 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
                   label="View"
                   value={view}
                   options={[
-                    { v: 'public',   label: 'Public',   icon: Eye },
-                    { v: 'internal', label: 'Internal', icon: Lock }
+                    { v: 'public',   label: 'Public site',      icon: Eye },
+                    { v: 'internal', label: 'Internal dashboard', icon: Lock }
                   ]}
                   onChange={setView}
                   isA={isA}
@@ -307,8 +360,8 @@ function TopBar({ styleVariant, setStyleVariant, view, setView, phase, setPhase 
                 label="View"
                 value={view}
                 options={[
-                  { v: 'public',   label: 'Public',   icon: Eye },
-                  { v: 'internal', label: 'Internal', icon: Lock }
+                  { v: 'public',   label: 'Public site',      icon: Eye },
+                  { v: 'internal', label: 'Internal dashboard', icon: Lock }
                 ]}
                 onChange={setView}
                 isA={isA}
@@ -869,7 +922,7 @@ function HearingA() {
           <div className="border border-stone-900 bg-[#0A1628] text-[#F5F0E6] p-6 rounded-sm">
             <div className="font-mono-a text-[10px] uppercase tracking-[0.22em] text-[#C8501F] mb-3">Planning Commission</div>
             <div className="font-display-a text-3xl mb-1">Oct 14, 2026</div>
-            <div className="text-stone-300 mb-6">6:30 PM · Cherrywood City Hall</div>
+            <div className="text-stone-300 mb-6">6:30 PM · Denver City and County Building</div>
             <button className="w-full bg-[#C8501F] text-[#0A1628] font-semibold py-3 rounded-sm flex items-center justify-center gap-2 text-sm hover:bg-[#F5F0E6] min-h-[44px]"><Calendar className="w-4 h-4" /> RSVP to attend</button>
           </div>
         </div>
@@ -898,8 +951,8 @@ function FAQA() {
     <SectionA title="Common questions" mono="04">
       <div className="grid grid-cols-12 gap-x-8 gap-y-6">
         {[
-          ['Who\'s behind this project?',  'Meridian Development Partners, working with Lattice Public Affairs.'],
-          ['Is this a city website?',           'No. This is an applicant-run project site. Official city info is at cherrywood.gov.'],
+          ['Who\'s behind this project?',  'East West Partners, working with Wall Kane Consulting.'],
+          ['Is this a city website?',           'No. This is an applicant-run project site. Official city info is at denvergov.org.'],
           ['How will my comment be used?',      'Comments are clustered weekly and reflected in the \"How we\'re listening\" matrix.'],
           ['What happens at the hearing?',      'Planning Commission recommends; City Council holds the final vote.']
         ].map(([q,a],i)=>(
@@ -921,7 +974,8 @@ function FooterA() {
           <div className="col-span-12 lg:col-span-6">
             <div className="font-mono-a text-[10px] uppercase tracking-[0.22em] text-[#C8501F] mb-3">Disclosure</div>
             <p className="text-stone-300 text-sm leading-relaxed max-w-xl">
-              This website is paid for by <strong className="text-[#F5F0E6]">{PROJECT.applicant}</strong> and produced with <strong className="text-[#F5F0E6]">{PROJECT.firm}</strong>. It is not an official communication of the City of Cherrywood. Official city information is at <span className="underline">cherrywood.gov</span>.
+              This website is paid for by <strong className="text-[#F5F0E6]">{PROJECT.applicant}</strong> and produced with <strong className="text-[#F5F0E6]">{PROJECT.firm}</strong>. It is not an official communication of the City and County of Denver. Official city information is at <span className="underline">denvergov.org</span>.
+              <span className="block mt-2 text-[10px] tracking-[0.08em] opacity-60">Engagement platform powered by <strong className="text-[#F5F0E6]">LATTICE</strong>.</span>
             </p>
           </div>
           <div className="col-span-6 lg:col-span-3"><div className="font-mono-a text-[10px] uppercase tracking-[0.22em] text-stone-500 mb-3">Project</div><ul className="text-sm text-stone-300 space-y-2"><li>Documents</li><li>Hearing schedule</li><li>FAQ</li><li>Contact</li></ul></div>
@@ -1054,7 +1108,7 @@ function HeatmapA() {
         <span>High</span>
       </div>
       <div className="mt-4 p-3 border-l-2 border-[#C8501F] bg-white/[0.03]">
-        <div className="text-[11px] text-stone-400 leading-relaxed"><strong className="text-[#F5F0E6]">Action:</strong> Highest-opposition blocks overlap with the Linden Park HOA. Schedule door-knocks next week. <span className="font-mono-a text-[10px] text-stone-500">Directional only.</span></div>
+        <div className="text-[11px] text-stone-400 leading-relaxed"><strong className="text-[#F5F0E6]">Action:</strong> Highest-opposition blocks overlap with the Cherry Creek North Neighborhood Coalition. Schedule door-knocks next week. <span className="font-mono-a text-[10px] text-stone-500">Directional only.</span></div>
       </div>
     </DashPanelA>
   );
@@ -1134,7 +1188,7 @@ function FooterAInternal() {
   return (
     <div className="border-t border-white/10 mt-6">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between font-mono-a text-[10px] uppercase tracking-[0.22em] text-stone-500 gap-2">
-        <div>Restricted · Lattice Public Affairs · {PROJECT.applicant}</div>
+        <div>Restricted · Wall Kane Consulting · {PROJECT.applicant}</div>
         <div>All AI outputs require human approval before publication</div>
       </div>
     </div>
@@ -1195,35 +1249,45 @@ const SectionB = ({ title, kicker, children, intro }) => (
 
 function HeroB({ phase }) {
   const data = {
-    1: { kicker: 'Phase 1 of 3', heading: 'A new neighborhood for Cherrywood.', cta: { label: 'Sign up for updates', icon: Mail } },
+    1: { kicker: 'Phase 1 of 3', heading: 'A new neighborhood for Cherry Creek.', cta: { label: 'Sign up for updates', icon: Mail } },
     2: { kicker: 'Phase 2 of 3 · Now collecting input', heading: 'Your input is shaping this plan.', cta: { label: 'Share your input', icon: MessageSquare } },
     3: { kicker: 'Phase 3 of 3 · Hearing on October 14', heading: 'Here is what changed because of your feedback.', cta: { label: 'RSVP to the public hearing', icon: Calendar } }
   };
   const d = data[phase];
   const Cta = d.cta.icon;
   return (
-    <section className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-10">
-      <div className="grid grid-cols-12 gap-6 sm:gap-10">
-        <div className="col-span-12 lg:col-span-7">
-          <div className="font-display-b text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: B.primary }}>{d.kicker}</div>
-          <h1 className="font-display-b text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] mb-4" style={{ color: B.heading }}>{PROJECT.name}</h1>
-          <p className="text-xl sm:text-2xl leading-snug mb-6" style={{ color: B.text }}>{d.heading}</p>
-          <p className="text-lg leading-relaxed mb-8 max-w-2xl" style={{ color: B.textMuted }}>{PROJECT.description}</p>
-          <div className="flex flex-wrap gap-3">
-            <BBtn primary icon={Cta}>{d.cta.label}</BBtn>
-            <BBtn icon={FileText}>Read the full plan</BBtn>
+    <section
+      className="relative"
+      style={{
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.82) 55%, rgba(255,255,255,0.94) 100%), url("https://images.unsplash.com/photo-1448630360428-65456885c650?w=2000&q=85&auto=format&fit=crop")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-10">
+        <div className="grid grid-cols-12 gap-6 sm:gap-10">
+          <div className="col-span-12 lg:col-span-7">
+            <div className="font-display-b text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: B.primary }}>{d.kicker}</div>
+            <h1 className="font-display-b text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] mb-4" style={{ color: B.heading }}>{PROJECT.name}</h1>
+            <p className="text-xl sm:text-2xl leading-snug mb-6" style={{ color: B.text }}>{d.heading}</p>
+            <p className="text-lg leading-relaxed mb-8 max-w-2xl" style={{ color: B.textMuted }}>{PROJECT.description}</p>
+            <div className="flex flex-wrap gap-3">
+              <BBtn primary icon={Cta}>{d.cta.label}</BBtn>
+              <BBtn icon={FileText}>Read the full plan</BBtn>
+            </div>
           </div>
-        </div>
-        <div className="col-span-12 lg:col-span-5">
-          <div className="rounded-lg border-2 p-6" style={{ borderColor: B.border, background: B.surface }}>
-            <div className="font-display-b text-base font-semibold mb-4" style={{ color: B.heading }}>Project at a glance</div>
-            <dl className="space-y-3">
-              <BFact label="Site size">{PROJECT.parcels}</BFact>
-              <BFact label="Current zoning">{PROJECT.zoning.current}</BFact>
-              <BFact label="Proposed zoning">{PROJECT.zoning.proposed}</BFact>
-              <BFact label="Hearing date">{PROJECT.hearing}</BFact>
-              <BFact label="Comments received">{PROJECT.stats.comments.toLocaleString()} from neighbors</BFact>
-            </dl>
+          <div className="col-span-12 lg:col-span-5">
+            <div className="rounded-lg border-2 p-6" style={{ borderColor: B.border, background: B.surface, boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+              <div className="font-display-b text-base font-semibold mb-4" style={{ color: B.heading }}>Project at a glance</div>
+              <dl className="space-y-3">
+                <BFact label="Site size">{PROJECT.parcels}</BFact>
+                <BFact label="Current zoning">{PROJECT.zoning.current}</BFact>
+                <BFact label="Proposed zoning">{PROJECT.zoning.proposed}</BFact>
+                <BFact label="Hearing date">{PROJECT.hearing}</BFact>
+                <BFact label="Comments received">{PROJECT.stats.comments.toLocaleString()} from neighbors</BFact>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
@@ -1308,7 +1372,7 @@ function VisionB() {
     { icon: Trees, t: '1.2-acre public plaza', s: 'Permanently dedicated open space with a farmers-market easement and a maintenance endowment.' }
   ];
   return (
-    <SectionB kicker="What's being proposed" title="What we want to build" intro="Three components, all designed to fit the character of the Linden Avenue corridor.">
+    <SectionB kicker="What's being proposed" title="What we want to build" intro="Three components, all designed to fit the character of the University Boulevard corridor.">
       <div className="grid grid-cols-12 gap-4 sm:gap-6">
         {items.map((c, i) => (
           <article key={i} className="col-span-12 md:col-span-4 rounded-lg border-2 p-6" style={{ borderColor: B.border, background: B.bg }}>
@@ -1459,19 +1523,19 @@ function MapB() {
 
 function CommentsB() {
   return (
-    <SectionB kicker="Public comment" title="Share your thoughts on the project" intro="Comments are reviewed every week. Your name and ZIP code help us verify you live or work nearby — and ensure your voice is part of the official record.">
+    <SectionB kicker="Public comment" title="Share your thoughts on the project" intro="Comments are reviewed every week. Your name and address help us verify you live or work nearby — and ensure your voice is part of the official record.">
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 lg:col-span-7">
           <form className="rounded-lg border-2 p-6 space-y-4" style={{ borderColor: B.border, background: B.surface }}>
             <BField label="First name (required)"><input className="w-full px-3 py-3 text-base rounded-md border-2 outline-none" style={{ borderColor: B.borderStrong, minHeight: 48 }} /></BField>
             <BField label="Last initial"><input maxLength={1} className="w-full px-3 py-3 text-base rounded-md border-2 outline-none" style={{ borderColor: B.borderStrong, minHeight: 48 }} /></BField>
-            <BField label="ZIP code (required)" hint="We use your ZIP to confirm you live or work nearby. It is not shared publicly."><input className="w-full px-3 py-3 text-base rounded-md border-2 outline-none" style={{ borderColor: B.borderStrong, minHeight: 48 }} /></BField>
+            <BField label="Street address (required)" hint="We use your address to verify you live in the project area. We do not share it publicly."><input placeholder="123 University Blvd, Denver, CO 80206" className="w-full px-3 py-3 text-base rounded-md border-2 outline-none" style={{ borderColor: B.borderStrong, minHeight: 48 }} /></BField>
             <BField label="Your comment" hint="What would you like the project team to know? Be specific.">
               <textarea rows={6} className="w-full px-3 py-3 text-base rounded-md border-2 outline-none resize-none" style={{ borderColor: B.borderStrong }} />
             </BField>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
               <div className="flex items-center gap-2 text-sm" style={{ color: B.textMuted }}>
-                <Shield className="w-4 h-4 flex-shrink-0" style={{ color: B.primary }} />Real-name policy. ZIP-verified. Spam filtered.
+                <Shield className="w-4 h-4 flex-shrink-0" style={{ color: B.primary }} />Real-name policy. Address-verified. Spam filtered.
               </div>
               <BBtn primary icon={Send}>Submit comment</BBtn>
             </div>
@@ -1563,7 +1627,7 @@ function HearingB() {
             <div className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-80">Planning Commission Hearing</div>
             <div className="font-display-b text-4xl font-bold mb-2">October 14, 2026</div>
             <div className="text-lg mb-1">6:30 PM</div>
-            <div className="text-base opacity-80 mb-6">Cherrywood City Hall, Council Chambers</div>
+            <div className="text-base opacity-80 mb-6">Denver City and County Building, Council Chambers</div>
             <button className="w-full bg-white rounded-md py-3 text-base font-semibold flex items-center justify-center gap-2" style={{ color: B.heading, minHeight: 48 }}>
               <Calendar className="w-5 h-5" /> RSVP to attend
             </button>
@@ -1596,8 +1660,8 @@ function HearingB() {
 
 function FAQB() {
   const faqs = [
-    ['Who is behind this project?',  'Meridian Development Partners is the applicant. They are working with Lattice Public Affairs to share information and gather community input. You can see the full disclosure at the bottom of every page.'],
-    ['Is this an official city website?', 'No. This website is run by the applicant. It is not an official communication of the City of Cherrywood. For official city information, visit cherrywood.gov.'],
+    ['Who is behind this project?',  'East West Partners is the applicant. They are working with Wall Kane Consulting to share information and gather community input. You can see the full disclosure at the bottom of every page.'],
+    ['Is this an official city website?', 'No. This website is run by the applicant. It is not an official communication of the City and County of Denver. For official city information, visit denvergov.org.'],
     ['How will my comment be used?',  'Every comment is reviewed weekly, tagged by topic, and shown in the "What changed because of your feedback" section above. Verified comments are also submitted to the public record before the hearing.'],
     ['What happens at the hearing?',  'The Planning Commission reviews the project and makes a recommendation. The City Council then holds the final vote.']
   ];
@@ -1626,7 +1690,8 @@ function FooterB() {
           <div className="col-span-12 lg:col-span-7">
             <div className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: B.primary }}>Disclosure</div>
             <p className="text-base leading-relaxed max-w-2xl" style={{ color: B.text }}>
-              This website is paid for by <strong>{PROJECT.applicant}</strong> and produced in partnership with <strong>{PROJECT.firm}</strong>. It is not an official communication of the City of Cherrywood. For official city information, please visit <a className="underline font-semibold" style={{ color: B.primary }}>cherrywood.gov</a>.
+              This website is paid for by <strong>{PROJECT.applicant}</strong> and produced in partnership with <strong>{PROJECT.firm}</strong>. It is not an official communication of the City and County of Denver. For official city information, please visit <a className="underline font-semibold" style={{ color: B.primary }}>denvergov.org</a>.
+              <span className="block mt-2 text-xs opacity-70" style={{ letterSpacing: '0.04em' }}>Engagement platform powered by <strong>Lattice</strong>.</span>
             </p>
             <p className="text-sm mt-3" style={{ color: B.textMuted }}>Need help reading this site? Call (303) 555-0140. Disponible en español.</p>
           </div>
@@ -1810,7 +1875,7 @@ function HeatmapB() {
       </div>
       <div className="rounded-md border-l-4 p-4" style={{ borderColor: B.warning, background: B.warningBg }}>
         <div className="font-display-b font-bold mb-1" style={{ color: B.warning }}>Recommended action</div>
-        <p className="text-sm" style={{ color: B.text }}>The two darkest blocks (north and northeast of the site) overlap with the Linden Park HOA. <strong>Schedule door-knocks and a small-group session there next week.</strong> Treat this as directional, not a guarantee.</p>
+        <p className="text-sm" style={{ color: B.text }}>The two darkest blocks (north and northeast of the site) overlap with the Cherry Creek North Neighborhood Coalition. <strong>Schedule door-knocks and a small-group session there next week.</strong> Treat this as directional, not a guarantee.</p>
       </div>
     </PanelB>
   );
@@ -1904,7 +1969,7 @@ function CouncilB() {
 function InsightsB() {
   const items = [
     { t: 'Parking is now the top concern', b: 'Parking surpassed Building Height this week, up 34% in volume. The Comp Plan and Zoning Code both support our position. We recommend front-loading the parking response in the next newsletter.', priority: 'High' },
-    { t: 'District 2 may be moving toward support', b: 'Councilmember Whitfield (D2) spoke favorably about the project at last night\'s Linden Park HOA meeting. Tone shifted from skeptical to conditional. Suggest scheduling a one-on-one site walk before Sept 10.', priority: 'Medium' },
+    { t: 'District 2 may be moving toward support', b: 'Councilmember Whitfield (D2) spoke favorably about the project at last night\'s Cherry Creek North Neighborhood Coalition meeting. Tone shifted from skeptical to conditional. Suggest scheduling a one-on-one site walk before Sept 10.', priority: 'Medium' },
     { t: 'Letter-of-support template overused', b: '22% of supporters are submitting the template verbatim. Clerks notice this. We recommend diversifying the template into 3 variants and prompting for personal detail.', priority: 'Medium' }
   ];
   return (
@@ -1969,24 +2034,24 @@ const CONSOLE = {
 function BuilderConsole() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState({
-    name: 'Cherry Creek Commons',
+    name: 'Cherry Creek West',
     type: 'Rezoning',
-    applicant: 'Meridian Development Partners',
-    firm: 'Lattice Public Affairs',
-    address: '4400 Linden Avenue, Cherrywood CO',
-    parcelSize: '12.4 acres',
-    city: 'Cherrywood, Colorado',
+    applicant: 'East West Partners',
+    firm: 'Wall Kane Consulting',
+    address: '4400 University Boulevard, Cherry Creek CO 80206',
+    parcelSize: '13 acres · 4 blocks',
+    city: 'Cherry Creek, Denver, Colorado',
     compPlanIngested: false,
     zoningIngested: false,
-    currentZoning: 'I-1 (Light Industrial)',
-    proposedZoning: 'MX-3 (Mixed-Use, Mid-Rise)',
+    currentZoning: 'C-CCN-8 (Cherry Creek North 8)',
+    proposedZoning: 'C-MX-8 (Mixed-Use, 8-story)',
     submittal: '2026-07-15',
     referralEnd: '2026-09-12',
     hearing: '2026-10-14',
     council: '2026-11-04',
     councilCount: 7,
-    knownOpposition: 'Linden Park HOA (northwest), Cherrywood Preservation Society',
-    allied: 'Cherrywood Housing Trust, Downtown Business Alliance',
+    knownOpposition: 'Cherry Creek North Neighborhood Coalition (northwest), Cherry Creek Heritage Council',
+    allied: 'Denver Housing Trust, Downtown Business Alliance',
     aiRag: true,
     aiCluster: true,
     aiDrafts: true,
@@ -1994,7 +2059,7 @@ function BuilderConsole() {
     stylePreset: 'B',
     primaryColor: '#0050B4',
     languages: ['English', 'Spanish'],
-    disclosure: 'This website is paid for by Meridian Development Partners and produced with Lattice Public Affairs.'
+    disclosure: 'This website is paid for by East West Partners and produced with Wall Kane Consulting.'
   });
   const [deployed, setDeployed] = useState(false);
 
@@ -2559,42 +2624,42 @@ const COUNCIL_INTEL = [
 ];
 
 const PREDICTED_SPEAKERS = [
-  { name: 'Maria S.',  zip: '80207', likelihood: 91, argument: 'Traffic on Linden corridor',
-    why: 'Commented on 3 prior projects. Linden Park HOA active. Spoke at 2024 hearing.' },
+  { name: 'Maria S.',  zip: '80207', likelihood: 91, argument: 'Traffic on University Boulevard corridor',
+    why: 'Commented on 3 prior projects. Cherry Creek North Neighborhood Coalition active. Spoke at 2024 hearing.' },
   { name: 'Anne R.',   zip: '80208', likelihood: 88, argument: 'Building height / mountain view',
     why: 'HOA leadership. Posted 4× on Nextdoor this week. View-blocked unit owner.' },
   { name: 'James W.',  zip: '80206', likelihood: 76, argument: 'School capacity overflow',
     why: 'Parent. Spoke at school board last quarter. Commented on prior rezone.' },
   { name: 'Carol B.',  zip: '80207', likelihood: 73, argument: 'Wildlife corridor disruption',
-    why: 'CCPS member. Filed CEQA-style appeal in 2023.' },
+    why: 'CCHC member. Filed CEQA-style appeal in 2023.' },
   { name: 'David F.',  zip: '80206', likelihood: 64, argument: 'Affordable housing inadequate',
     why: 'Persuadable if depth increased. Active in housing advocacy.' }
 ];
 
 const REBUTTALS = [
-  { for: 'Traffic on Linden corridor',
-    text: 'TIA shows peak-hour increase of 4.2% — within MX-3 thresholds. Plus committed $480K signal upgrade at Linden & Cherry.',
+  { for: 'Traffic on University Boulevard corridor',
+    text: 'TIA shows peak-hour increase of 4.2% — within MX-3 thresholds. Plus committed $480K signal upgrade at University & 1st Ave.',
     cite: 'TIA §3.2 · ZC §17.40.060', conf: 0.93 },
   { for: 'Building height / view',
-    text: 'Revised plan steps down to 3 stories along Linden. Preserves view corridor per Comp Plan §4.3, p.87.',
+    text: 'Revised plan steps down to 3 stories along University. Preserves view corridor per Comp Plan §4.3, p.87.',
     cite: 'Comp Plan §4.3', conf: 0.91 },
   { for: 'School capacity',
-    text: 'Coordinated with Cherrywood SD. Project generates ~37 students; Linden Elementary at 89% capacity. SD letter on file.',
+    text: 'Coordinated with Denver Public Schools. Project generates ~37 students; Cherry Creek Elementary at 89% capacity. SD letter on file.',
     cite: 'SD Letter Aug 12 2026', conf: 0.84 },
   { for: 'Wildlife corridor',
     text: 'Setback increased to 60 ft along creek. Habitat assessment confirms no critical species impact. WCO §22.04 satisfied.',
     cite: 'WCO §22.04', conf: 0.87 },
   { for: 'Affordable housing',
-    text: '12% affordable at 80% AMI, exceeding 10% IH minimum. Exploring Cherrywood Housing Trust partnership for deeper affordability.',
+    text: '12% affordable at 80% AMI, exceeding 10% IH minimum. Exploring Denver Housing Trust partnership for deeper affordability.',
     cite: 'IHO §17.62.020', conf: 0.79 }
 ];
 
 const OPPOSITION_GROUPS = [
-  { name: 'Linden Park HOA', members: 247, threat: 'High', threatColor: WR.red,
+  { name: 'Cherry Creek North Neighborhood Coalition', members: 247, threat: 'High', threatColor: WR.red,
     issue: 'Height, density, traffic', leader: 'Anne R.',
     funded: 'Member dues. No outside funding detected.',
     activity: '3 town halls scheduled · Door-knocked 4 blocks · 147 Nextdoor posts / 30d' },
-  { name: 'Cherrywood Preservation Society', members: 89, threat: 'Medium', threatColor: WR.amber,
+  { name: 'Cherry Creek Heritage Council', members: 89, threat: 'Medium', threatColor: WR.amber,
     issue: 'Wildlife, neighborhood character', leader: 'Carol B.',
     funded: 'Member dues + 1 small grant ($4K, Western Conservation).',
     activity: 'Filed records request · Active Substack (2,140 subs) · No hearing testimony yet' },
@@ -2605,17 +2670,17 @@ const OPPOSITION_GROUPS = [
 ];
 
 const PULSE_FEED = [
-  { time: '14:32',    type: 'positive', text: 'Whitfield (D2) used "well-designed" in Linden Park HOA Q&A. Tone shift logged.' },
+  { time: '14:32',    type: 'positive', text: 'Whitfield (D2) used "well-designed" in Cherry Creek North Neighborhood Coalition Q&A. Tone shift logged.' },
   { time: '11:08',    type: 'neutral',  text: 'New comment submitted via project site — supportive. ZIP-verified, real-name.' },
-  { time: '09:15',    type: 'warning',  text: 'Linden HOA scheduled 3rd town hall for Sep 28. Expected attendance ~80.' },
+  { time: '09:15',    type: 'warning',  text: 'Cherry Creek North Coalition scheduled 3rd town hall for Sep 28. Expected attendance ~80.' },
   { time: 'Yesterday', type: 'positive', text: 'Cross-project benchmark refreshed: similar projects (n=49) at 75% approval.' },
   { time: 'Yesterday', type: 'critical', text: 'Unverified opposition group detected — possible astroturf. Investigation triggered.' },
   { time: '2d ago',   type: 'positive', text: 'Auto-drafted parking rebuttal approved & published. Public site updated.' }
 ];
 
 const TICKER_ITEMS = [
-  { tone: 'positive', text: 'Whitfield (D2) shifted positive · Linden Park HOA Q&A' },
-  { tone: 'warning',  text: 'Linden HOA · 3rd town hall scheduled Sep 28' },
+  { tone: 'positive', text: 'Whitfield (D2) shifted positive · Cherry Creek North Neighborhood Coalition Q&A' },
+  { tone: 'warning',  text: 'Cherry Creek North Coalition · 3rd town hall scheduled Sep 28' },
   { tone: 'critical', text: 'Unverified opposition group detected · domain registered 9d ago' },
   { tone: 'positive', text: 'Benchmark refreshed: 75% pass rate across 49 comparable projects' },
   { tone: 'positive', text: 'Approval probability ↑3.2pts week-over-week' },
@@ -2934,6 +2999,10 @@ function WRBenchmark() {
         <Check size={12} style={{ marginTop: 2, flexShrink: 0 }} />
         <span>Tracking 7pts above comparable pass rate.</span>
       </div>
+      <div className="mt-2 px-3 py-2 rounded text-[11px] leading-snug" style={{ background: 'rgba(255,255,255,0.03)', color: WR.textMuted, border: `1px solid ${WR.border}` }}>
+        <span style={{ color: WR.amber, fontFamily: '"IBM Plex Mono", monospace', fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Precedent · East West Partners</span>
+        Most recent Cherry Creek mixed-use rezoning by this applicant passed Denver City Council <strong style={{ color: WR.green }}>13-0 unanimous</strong>. Patterns from that campaign loaded into the playbook.
+      </div>
     </div>
   );
 }
@@ -2984,7 +3053,7 @@ function WRInfluence() {
     { id: 'DW',  x: 160, y: 110, r: 24, label: 'Whitfield', sub: 'D2',           color: WR.amber, center: true },
     { id: 'CoS', x: 60,  y: 45,  r: 17, label: 'CoS',       sub: 'J. Reyes',     color: WR.green,  edge: { w: 3.0, c: WR.green } },
     { id: 'DON', x: 260, y: 45,  r: 17, label: 'Top donor', sub: 'Bristol Cap.', color: WR.amber,  edge: { w: 1.8, c: WR.amber } },
-    { id: 'HOA', x: 60,  y: 175, r: 17, label: 'Linden HOA',sub: 'opposing',     color: WR.red,    edge: { w: 1.8, c: WR.red } },
+    { id: 'HOA', x: 60,  y: 175, r: 17, label: 'CC North Coalition',sub: 'opposing',     color: WR.red,    edge: { w: 1.8, c: WR.red } },
     { id: 'ALY', x: 260, y: 175, r: 17, label: 'Ally org',  sub: 'YIMBY Co',     color: WR.green,  edge: { w: 1.2, c: WR.green } },
     { id: 'BIZ', x: 160, y: 20,  r: 14, label: 'Local biz', sub: '4 endorsers',  color: WR.blue,   edge: { w: 1.0, c: WR.blue } }
   ];

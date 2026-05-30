@@ -902,12 +902,12 @@ function CommentsA() {
               <input placeholder="First name" className="bg-white/70 border border-stone-300 px-3 py-2 text-sm rounded-sm outline-none focus:border-[#C8501F] min-h-[44px]" />
               <input placeholder="Last initial" className="bg-white/70 border border-stone-300 px-3 py-2 text-sm rounded-sm outline-none focus:border-[#C8501F] min-h-[44px]" />
             </div>
-            <input placeholder="ZIP code (required)" className="w-full bg-white/70 border border-stone-300 px-3 py-2 text-sm rounded-sm outline-none focus:border-[#C8501F] mb-3 min-h-[44px]" />
+            <input placeholder="Street address (required)" className="w-full bg-white/70 border border-stone-300 px-3 py-2 text-sm rounded-sm outline-none focus:border-[#C8501F] mb-3 min-h-[44px]" />
             <textarea placeholder="Tell us what you think. Be specific — what would make this better?" rows={5}
               className="w-full bg-white/70 border border-stone-300 px-3 py-2 text-sm rounded-sm outline-none focus:border-[#C8501F] mb-3 resize-none" />
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-xs text-stone-500">
-                <Shield className="w-3.5 h-3.5 flex-shrink-0" />Real-name policy. ZIP-verified. Spam filtered.
+                <Shield className="w-3.5 h-3.5 flex-shrink-0" />Real-name policy. Address-verified. Spam filtered.
               </div>
               <button className="bg-[#0A1628] text-[#F5F0E6] text-sm px-5 py-2 rounded-sm flex items-center gap-2 hover:bg-[#C8501F] min-h-[44px]">
                 <MessageSquare className="w-3.5 h-3.5" />Submit
@@ -1298,7 +1298,8 @@ function HeroB({ phase }) {
     <section
       className="relative"
       style={{
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.82) 55%, rgba(255,255,255,0.94) 100%), url("https://images.unsplash.com/photo-1448630360428-65456885c650?w=2000&q=85&auto=format&fit=crop")',
+        backgroundColor: '#E8DCC4',
+        backgroundImage: 'linear-gradient(rgba(255,248,235,0.70) 0%, rgba(255,248,235,0.32) 45%, rgba(255,248,235,0.58) 100%), url("https://images.unsplash.com/photo-1750762367188-2f884520d63d?w=2000&q=85&auto=format&fit=crop")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'

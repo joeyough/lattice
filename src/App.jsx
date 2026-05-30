@@ -250,7 +250,7 @@ function DemoBanner({ onDismiss }) {
               Three waves of platform build
             </div>
             <div className="space-y-1.5">
-              <WaveLine n="1" title="Public site" desc="The resident-facing page you're looking at now." />
+              <WaveLine n="1" title="Public site" desc='The resident-facing page you’re on. The "Step 01 / 02 / 03" pills below show project lifecycle stages (intro → comment → hearing).' />
               <WaveLine n="2" title="Internal dashboard for the WKC team" desc='Toggle "Internal dashboard" above to see it.' />
               <WaveLine n="3" title="War Room + Builder" desc="Deeper intel + site-deployment tools. Buttons top right." />
             </div>
@@ -1299,7 +1299,7 @@ function HeroB({ phase }) {
       className="relative"
       style={{
         backgroundColor: '#E8DCC4',
-        backgroundImage: 'linear-gradient(rgba(255,248,235,0.70) 0%, rgba(255,248,235,0.32) 45%, rgba(255,248,235,0.58) 100%), url("https://images.unsplash.com/photo-1750762367188-2f884520d63d?w=2000&q=85&auto=format&fit=crop")',
+        backgroundImage: 'linear-gradient(90deg, rgba(255,248,235,0.96) 0%, rgba(255,248,235,0.92) 38%, rgba(255,248,235,0.55) 62%, rgba(255,248,235,0.12) 100%), url("https://images.unsplash.com/photo-1750762367188-2f884520d63d?w=2000&q=85&auto=format&fit=crop")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
